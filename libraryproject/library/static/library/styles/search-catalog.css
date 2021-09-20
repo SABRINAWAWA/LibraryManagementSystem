@@ -1,0 +1,53 @@
+html, body{
+    background-color:#FAFAFA;
+    height: 100%;
+    margin: 0;
+}
+
+.content{
+    min-height:100%;
+}
+
+.header{
+    text-align: center;
+}
+
+.header h1{
+    color: black;
+}
+
+.container{
+    background-color:#FAFAFA;
+    padding:20px;
+    padding-bottom: 50px;
+    
+}
+
+.body_container{
+    margin-bottom:50px;
+}
+
+.search_input{
+    background-color:#087CA7;
+    color: white;
+    padding: 5px 5px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.search_input h3{
+    font-size:23px;
+}
+
+.search_output{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+    padding: 5px 5px;
+    margin: 0 auto;
+}
+
+.bookitem{
+    margin-top:10px;
+}
