@@ -1,12 +1,13 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Member Panel</title>
-    <link rel="stylesheet" href="{% static 'library/styles/register.css' %}">
+    <link rel="stylesheet" href="{% static 'library/styles/memberpanel.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
@@ -17,18 +18,179 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js"
         integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/"
         crossorigin="anonymous"></script>
+
+    <style>
+        .container {
+            margin-top: 6rem;
+        }
+
+        .pageheader h2{
+            text-align:center;
+        }
+
+        .row1 {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            margin-bottom:3rem;
+            justify-content:center;
+            align-items:flex-start;
+        }
+
+        .bookdata{
+            display: flex;
+            flex-direction: row;
+        }
+
+        .bookdata .card{
+            margin-left: 15px;
+        }
+
+        .bookdata .card .card-body .card-title{
+            text-align:center;
+        }
+
+        .bookdata .card .card-body .card-text{
+            text-align:center;
+            font-size: 5rem;
+        }
+
+
+        .bookdata .card .card-body .card-link{
+            text-align:center;
+        }
+
+        .row2{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            margin-bottom:3rem;
+            justify-content:center;
+            align-items:flex-start;
+        }
+
+        .rentedbook{
+            background-color:#e9c46a;
+        }
+
+        .returnedbook{
+            background-color:#f4a261;
+        }
+
+        .reservedbook{
+            background-color:#2a9d8f;
+        }
+
+        .shelf .recommendation-container{
+            margin: 1rem 1rem;
+        }
+
+        .recommendation-container{
+            margin-left: 1rem;
+        }
+        .shelf .card-header{
+            text-align:center;
+        }
+    </style>
 </head>
+
 <body>
     {% include 'library/includes/navbar.html' %}
     <div class="container">
         {% for message in messages %}
         <p id="message">
-            <div class="alert alert-{{message.tags}}">{{message}}</div>
+        <div class="alert alert-{{message.tags}}">{{message}}</div>
         </p>
         {% endfor %}
-        <h2>Member Panel</h2>
-        <p><a href="/editmemberinfo/">Edit Member Info</a></p>
+
+        <section class="pageheader">
+            <h2>Member Panel</h2>
+        </section>
+
+        <section class="row1">
+            <div class="card profile" style="width: 18rem;">
+                <img class="card-img-top"
+                    src="https://images.unsplash.com/photo-1525253086316-d0c936c814f8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1170&q=80"
+                    alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title" style="text-align: center">{{ user.username }}</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Email: {{user.email}}</li>
+                    <li class="list-group-item">Phone Number: {{member.phone}}</li>
+                </ul>
+                <div class="card-body">
+                    <a href="/editmemberinfo/">Edit Member Info</a>
+                    <a href="#" class="card-link">Change Password</a>
+                </div>
+            </div>
+
+            <div class="bookdata">
+                <div class="card rentedbook" style="width: 12rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Book Rented</h5>
+                        <p class="card-text">0</p>
+                        <p class="card-link"><a href="#">Details</a></p>
+                    </div>
+                </div>
+                <div class="card reservedbook" style="width: 12rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Book Reserved</h5>
+                        <p class="card-text">0</p>
+                        <p class="card-link"><a href="#">Details</a></p>
+                    </div>
+                </div>
+                <div class="card returnedbook" style="width: 12rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Book Returned</h5>
+                        <p class="card-text">0</p>
+                        <p class="card-link"><a href="#">Details</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="row2">
+            <div class="card shelf" style="width: 35rem;">
+                <div class="card-header">
+                    Book Shelf
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for bookitem in bookitems %}
+                    <li class="list-group-item">
+                        <div class="bookitem">
+                            <h3>{{bookitem.title}}</h3>
+                            <p>{{bookitem.author}}</p>
+                            <a href="">View Details</a>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="recommendation-container" style="width: 20rem;">
+                <div class="card">
+                    <div class="card-header">
+                        Recommendation List
+                    </div>
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">Book Title</h5>
+                                <small>Book Author</small>
+                            </div>
+                            <p class="mb-1">Description</p>
+                            <small>Genre</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
     </div>
-    
+
 </body>
+
 </html>

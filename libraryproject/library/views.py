@@ -99,7 +99,35 @@ def logoutuser(request):
 #@login_required(login_url='/login/')
 #@allowed_user(allowed_roles=['member'])
 def memberpanel(request):
-    context={}
+    bookitems=[{
+        'title': "Harry Potter and the Sorcerer's Stone",
+        'author': 'J. K. Rowling'
+    }, {
+        'title': "Harry Potter and Chamber of Secrets",
+        'author': 'J. K. Rowling'
+    }, {
+        'title': "Harry Potter and Prisoner of Azkaban",
+        'author': 'J. K. Rowling'
+    }, {
+        'title': "Harry Potter and Goblet of Fire",
+        'author': 'J. K. Rowling'
+    },
+    {
+        'title': "Harry Potter and Order of the Phoenix",
+        'author': 'J. K. Rowling'
+    },
+    {
+        'title': "Harry Potter and Half-Blood Prince",
+        'author': 'J. K. Rowling'
+    },{
+        'title': "Harry Potter and Deathly Hallows",
+        'author': 'J. K. Rowling'
+    }]
+    user=request.user
+    member=LibraryMember.objects.get(user=request.user.id)
+    context={'user': user,
+             'member':member,
+             'bookitems':bookitems}
     return render(request, 'library/memberpanel.html', context)
 
 #@login_required(login_url='/login/')

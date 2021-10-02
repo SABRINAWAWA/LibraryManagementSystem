@@ -1,3 +1,8 @@
 .container{
     margin-top:150px;
 }
+
+.row1{
+    display:flex;
+    flex-direction:row;
+}
