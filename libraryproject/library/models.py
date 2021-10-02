@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext as _
+from django.contrib.auth.models import User
 
 class Bookitems(models.Model):
     title=models.CharField(_('title'), max_length=255, default='NoTitle')
@@ -20,3 +21,13 @@ class Bookitems(models.Model):
 
     def __str__(self):
         return f'{self.title}-{self.authors}'
+    
+class LibraryMember(models.Model):
+    user=models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    phone=models.CharField(max_length=200, null=True)
+    address=models.CharField(max_length=200, null=True)
+    birthdate=models.DateField(null=True)
+    date_created=models.DateTimeField(auto_now_add=True, null=True)
+    
+    def __str__(self):
+        return self.user.username

@@ -1,3 +1,11 @@
+<style type="text/css">
+    .msg{
+        color: white;
+        font-size:18px;
+        margin-right: 20px;
+    }
+</style>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <a class="navbar-brand" href="#">Library</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
@@ -7,10 +15,23 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ml-auto">
             <a class="nav-item nav-link active" href="/home/">Home</a>
-            <a class="nav-item nav-link" href="#">Member Portal</a>
+            {% if request.user.groups.all.0.name == "member" %}
+            <a class="nav-item nav-link" href="/memberpanel/">Member Portal</a>
+            {% endif %}
+            {% if request.user.groups.all.0.name == "librarian" %}
+            <a class="nav-item nav-link" href="/librarianpanel/">Librarian Portal</a>
+            {% endif %}
             <a class="nav-item nav-link" href="/searchcatalog/">Search</a>
             <a class="nav-item nav-link" href="#">Contact</a>
-            <a class="nav-item nav-link" href="#">Login</a>
+            {% if user.is_authenticated %}
+            <a class="nav-item nav-link" href="/logout/">Log out</a>
+            {% else %}
+            <a class="nav-item nav-link" href="/login/">Login</a>
+            {% endif %}
         </div>
     </div>
+    {% if user.is_authenticated %}
+    <span class="msg">Hello, {{request.user.username}}</span>
+    {% endif %}
+    <span></span>
 </nav>
