@@ -10,6 +10,11 @@ from .filters import BookitemsFilter
 from .forms import CreateUserForm, UserUpdateForm, MemberUpdateForm
 from .decorators import unauthenticated_user, allowed_user, librarian_only
 
+"""
+Function name: home
+Function description: rendering homepage
+Note: Futher modification needs to import the bookitems from bookitems table and add librarian info
+"""
 def home(request):
     popularBooks = [
         {'id': 1, 'imageUrl': 'https://storage.googleapis.com/du-prd/books/images/9781982164881.jpg', 'title': 'Vince Flynn: Enemy At the Gates',
@@ -45,9 +50,15 @@ def home(request):
     })
 
 
+"""
+Function name: search 
+Function description: rendering search catalog page
+Note: Using BookitemsFilter class in filters.py to generate the filter result. 
+"""
+
 def search(request):
     searchedbook = []
-    bookitems = Bookitems.objects.all()
+    bookitems = getAllBookitems() 
     bookFilter = BookitemsFilter(request.GET, queryset=bookitems)
     if bookFilter.is_valid():
         searchedbook = bookFilter.qs
@@ -56,6 +67,10 @@ def search(request):
         'bookFilter': bookFilter,
         'searchedbook': searchedbook
     })
+    
+# Connect to Database and get all objects from bookitems table
+def getAllBookitems():
+    Bookitems.objects.all()
 
 @unauthenticated_user
 def loginpage(request):
