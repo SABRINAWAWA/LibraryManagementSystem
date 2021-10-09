@@ -6,28 +6,86 @@ class Bookitems(models.Model):
     title=models.CharField(_('title'), max_length=255, default='NoTitle')
     authors=models.CharField(_('authors'), max_length=200, default='NoAuthor')
     average_rating=models.CharField(_('average rating'), max_length=200, default='0.0')
-    isbn=models.CharField(_('isbn'), max_length=50, default='000000000', null=False, unique=True)
-    isbn13=models.CharField(_('isbn 13'), max_length=50, default='000000000', null=False)
-    language_code=models.CharField(_("language code"), max_length=50, default='eng')
-    num_pages=models.CharField(_("number of pages"), max_length=50, null=False, default='0')
-    ratings_count=models.CharField(_("rating count"), max_length=50, default='0')
-    text_reviews_count=models.CharField(_("text review count"), max_length=50, default='0')
-    publication_date=models.CharField(_("publication date"), max_length=50, default="01/01/1800")
-    publisher=models.CharField(_("publisher"), max_length=100, default='NoPublisher')
+    isbn=models.CharField(_('isbn'), max_length=50, default='000000000', null=False)
+    format=models.CharField(_("format"), max_length=100, default='NoFormat')
+    description=models.CharField(_("description"), max_length=200, default='NoDescription')
+    edition=models.CharField(_("edition"), max_length=100, default='NoEdition')
+    genres=models.CharField(_("genres"), max_length=100, default='NoGenre')
+    img_url=models.CharField(_("images"), max_length=1000, default='NoImage')
+    stock_quantity=models.IntegerField(_("Stock Quantity"), default=0)
+    available_quantity=models.IntegerField(_("Available Quantity"), default=0)
 
     class Meta:
-        ordering = ( 'title', 'authors', 'average_rating', 'isbn', 'isbn13', 'language_code', 'num_pages', 'ratings_count', 
-                    'text_reviews_count', 'publication_date', 'publisher')
+        ordering = ( 'title', 'authors', 'average_rating', 'isbn', 'format', 'description', 'edition', 'genres', 'img_url', 'stock_quantity', 'available_quantity' )
 
     def __str__(self):
         return f'{self.title}-{self.authors}'
+
     
 class LibraryMember(models.Model):
-    user=models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    member=models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     phone=models.CharField(max_length=200, null=True)
     address=models.CharField(max_length=200, null=True)
     birthdate=models.DateField(null=True)
     date_created=models.DateTimeField(auto_now_add=True, null=True)
+    hold=models.BooleanField(_('hold'), default=False)
     
     def __str__(self):
-        return self.user.username
+        return self.member.username
+
+class Librarian(models.Model):
+    librarian=models.OneToOneField(User, null=True, on_delete=models.CASCADE) 
+    name=models.CharField(_('name'), max_length=100, default='NoName')
+    username=models.CharField(_('username'),max_length=200, default='NoUsername', unique=True)
+    password=models.CharField(max_length=200, null=True)
+    email=models.CharField(max_length=200, null=True)
+    address=models.CharField(_('address'), max_length=200, null=True)
+    logo=models.CharField(_("Logo"), max_length=200, null=True)
+
+
+    def __str__(self):
+        return self.librarian.username
+
+class Rented_books(models.Model):    
+    book=models.OneToOneField(Bookitems, null=True, on_delete=models.PROTECT)
+    title=models.CharField(_('title'), max_length=255, default='NoTitle')
+    member_id=models.IntegerField(_("User Id"), default=0, unique=True)
+    email=models.CharField(max_length=200, null=True)
+    rented_date=models.DateField(_('Rented Date'), default="YYYY-MM-DD", null=True)
+    return_date=models.DateField(_('Returned Date'), default="YYYY-MM-DD", null=True)
+
+    def __str__(self):
+        return f'{self.title}'
+
+class hist_rented_books(models.Model):    
+    book=models.OneToOneField(Bookitems, null=True, on_delete=models.PROTECT)
+    title=models.CharField(_('title'), max_length=255, default='NoTitle')
+    member_id=models.IntegerField(_("User Id"), default=0, unique=True)
+    email=models.CharField(max_length=200, null=True)
+    rented_date=models.DateField(_('Rented Date'), default="YYYY-MM-DD", null=True)
+    return_date=models.DateField(_('Returned Date'), default="YYYY-MM-DD", null=True)
+
+    def __str__(self):
+        return f'{self.title}'
+
+class Reserved_books(models.Model): 
+    book=models.OneToOneField(Bookitems, null=True, on_delete=models.PROTECT)
+    title=models.CharField(_('title'), max_length=255, default='NoTitle')
+    member_id=models.IntegerField(_("User Id"), default=0, unique=True)
+    email=models.CharField(max_length=200, null=True)
+    reserved_date=models.DateField(_('Reserved Date'), default="YYYY-MM-DD", null=True)
+    deadline=models.DateField(_('Deadline'), default="YYYY-MM-DD", null=True)
+    available_rent_date=models.DateField(_('Available Rent Date'), default="YYYY-MM-DD", null=True)
+
+    def __str__(self):
+        return f'{self.title}'
+
+class Feedbacks(models.Model):    
+    member=models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    username=models.CharField(_('username'), max_length=200, default='NoUsername', unique=True)
+    feedback=models.CharField(_('Feedback'), max_length=1000, default='NoFeedback')
+    feedback_datetime=models.DateTimeField(_('Feedbak Datetime'), default="YYYY-MM-DD", null=True)
+
+    def __str__(self):
+        return f'{self.username}'
+
