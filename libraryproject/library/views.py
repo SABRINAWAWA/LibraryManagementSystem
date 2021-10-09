@@ -72,6 +72,12 @@ def search(request):
 def getAllBookitems():
     Bookitems.objects.all()
 
+"""
+Function name: loginpage 
+Function description: rendering user login page. When users submit the login form, it will search the matched username and password in the User table. After finding matched user, users will be redirected to home page.
+Otherwise, users will receive message "Username/Password is incorrect". 
+Note: Login Page Completed.
+"""
 @unauthenticated_user
 def loginpage(request):
     if request.method == 'POST':
@@ -86,7 +92,12 @@ def loginpage(request):
 
     context = {}
     return render(request, 'library/login.html', context)
-
+"""
+Function name: registerpage 
+Function description: rendering user register page. When users submit the register form, it will create new user in the user table and member table.
+Members will be directed to login page.
+Note: Register page needs modifications. 
+"""
 @unauthenticated_user
 def registerpage(request):
     form = CreateUserForm()
@@ -107,10 +118,19 @@ def registerpage(request):
     context = {'form': form}
     return render(request, 'library/register.html', context)
 
+"""
+Function name: logoutuser 
+Function description: logout users and redirect to login page after logout
+"""
 def logoutuser(request):
     logout(request)
     return redirect('/login/')
 
+"""
+Function name: memberpanel 
+Function description: rendering memberpanel page. Only members can access to memberpanel page and only when members login, they are able to access this page.
+Note: Member panel page needs modifications. 
+"""
 #@login_required(login_url='/login/')
 #@allowed_user(allowed_roles=['member'])
 def memberpanel(request):
@@ -145,12 +165,23 @@ def memberpanel(request):
              'bookitems':bookitems}
     return render(request, 'library/memberpanel.html', context)
 
+"""
+Function name: librarianpanel 
+Function description: rendering librarianpanel page. Only librarian can access to librarianpanel page and only when librarian login, they are able to access this page.
+Note: Librarian panel page needs modifications. 
+"""
 #@login_required(login_url='/login/')
 #@librarian_only
 def librarianpanel(request):
     context={}
     return render(request, 'library/librarianpanel.html', context)
 
+"""
+Function name: editmemberinfo 
+Function description: rendering user editmemberinfo page. When users submit the update_user_info form, it will update user info user table and member table by using 
+UserUpdateForm and MemberUpdateForm. Members will be redirected to memberpanel page after they updated their info.
+Note: editmemberinfo page Completed. 
+"""
 def editmemberinfo(request):
     if request.method=='POST':
         user_form=UserUpdateForm(request.POST,instance=request.user)
