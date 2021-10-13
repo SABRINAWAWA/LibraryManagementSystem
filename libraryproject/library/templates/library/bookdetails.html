@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details</title>
+</head>
+<body>
+    <h2>{{book.title}}</h2>
+    <img src="{{book.img_url}}" alt="{{book.title}}-image">
+    <p>Authors: {{book.authors}}</p>
+    <p>Average Rating: {{book.average_rating}}</p>
+    <p>ISBN: {{book.isbn}}</p>
+    <p>Description: {{book.description}}</p>
+    {% if book.edition|length > 0 %}
+    <p>Edition: {{book.edition}}</p>
+    {% else %}
+    <p>Edition: General Edition</p>
+    {% endif %}
+    <p>Genres: {{book.genres}}</p>
+    {% if book.available_quantity >= 0 %}
+    <h3>Available for renting</h3>
+    <button>Add to Shelf</button>
+    {% else %}
+    <h3>Unavailable for renting</h3>
+    {% endif %}
+    
+</body>
+</html>

@@ -22,10 +22,11 @@
     <style>
         .container {
             margin-top: 6rem;
+            margin-bottom: 6rem;
         }
 
-        .pageheader h2{
-            text-align:center;
+        .pageheader h2 {
+            text-align: center;
         }
 
         .row1 {
@@ -33,65 +34,66 @@
             flex-direction: row;
             flex-wrap: wrap;
             margin-top: 1rem;
-            margin-bottom:3rem;
-            justify-content:center;
-            align-items:flex-start;
+            margin-bottom: 3rem;
+            justify-content: center;
+            align-items: flex-start;
         }
 
-        .bookdata{
+        .bookdata {
             display: flex;
             flex-direction: row;
         }
 
-        .bookdata .card{
+        .bookdata .card {
             margin-left: 15px;
         }
 
-        .bookdata .card .card-body .card-title{
-            text-align:center;
+        .bookdata .card .card-body .card-title {
+            text-align: center;
         }
 
-        .bookdata .card .card-body .card-text{
-            text-align:center;
+        .bookdata .card .card-body .card-text {
+            text-align: center;
             font-size: 5rem;
         }
 
 
-        .bookdata .card .card-body .card-link{
-            text-align:center;
+        .bookdata .card .card-body .card-link {
+            text-align: center;
         }
 
-        .row2{
+        .row2 {
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;
             margin-top: 1rem;
-            margin-bottom:3rem;
-            justify-content:center;
-            align-items:flex-start;
+            margin-bottom: 3rem;
+            justify-content: center;
+            align-items: flex-start;
         }
 
-        .rentedbook{
-            background-color:#e9c46a;
+        .rentedbook {
+            background-color: #e9c46a;
         }
 
-        .returnedbook{
-            background-color:#f4a261;
+        .returnedbook {
+            background-color: #f4a261;
         }
 
-        .reservedbook{
-            background-color:#2a9d8f;
+        .reservedbook {
+            background-color: #2a9d8f;
         }
 
-        .shelf .recommendation-container{
+        .shelf .recommendation-container {
             margin: 1rem 1rem;
         }
 
-        .recommendation-container{
+        .recommendation-container {
             margin-left: 1rem;
         }
-        .shelf .card-header{
-            text-align:center;
+
+        .shelf .card-header {
+            text-align: center;
         }
     </style>
 </head>
@@ -188,7 +190,27 @@
                 </div>
             </div>
         </section>
-        
+
+        <section class="row3">
+            <div class="recommendation-container" style="width: 20rem;">
+                <div class="card">
+                    <div class="card-header">
+                        Feedback <a href="/feedback/new/">Create New Feedback</a>
+                    </div>
+                    <div class="list-group">
+                        {% for feedback in feedbacks %}
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{feedback.feedback_title}}</h5>
+                        </div>
+                        <p class="mb-1">{{feedback.feedback_content}}</p>
+                        <small>{{feedback.feedback_datetime}}</small>
+                        <p><a href="/feedback/update/{{feedback.id}}">Update</a></p>
+                        <p><a href="/feedback/delete/{{feedback.id}}">Delete</a></p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
 </body>
