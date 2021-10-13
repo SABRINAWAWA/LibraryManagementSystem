@@ -5,9 +5,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 
-from .models import Bookitems, LibraryMember
+from .models import Bookitems, LibraryMember, Feedbacks
 from .filters import BookitemsFilter
-from .forms import CreateUserForm, UserUpdateForm, MemberUpdateForm
+from .forms import CreateUserForm, UserUpdateForm, MemberUpdateForm, BookitemForm, FeedbackForm
 from .decorators import unauthenticated_user, allowed_user, librarian_only
 
 """
@@ -38,10 +38,10 @@ def home(request):
          'details': 'CCSF Library provide quality books to public school and community libraries where the majority of students live at or below the poverty line. Since 1999, with the help of volunteers, we’ve refurbished over 300 libraries and donated more than 1.7 million books. We also collaborate with partners to host fun, literacy experiences for families in communities throughout San Francisco.',
          'image': 'https://images.unsplash.com/photo-1463320726281-696a485928c7?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1170&q=80'},
         {'id': 2, 'title': 'Adding Search Catalog Feature',
-         'details': 'One of our tech members, Sabrina, designed and implemented the Search Catalog feature for our website. This web page is up and running. Members can access this feature through the `search` link on the right top corner.',
+         'details': 'One of our tech LibraryMembers, Sabrina, designed and implemented the Search Catalog feature for our website. This web page is up and running. LibraryMembers can access this feature through the `search` link on the right top corner.',
          'image': None},
         {'id': 3, 'title': 'New Check-in and Check-out Feature Will be Published Within Three Weeks',
-         'details': 'During next three or four weeks, our tech team will work on design and implement the Check-in and Check-out functions and improve our member and librarian system in our library management system.',
+         'details': 'During next three or four weeks, our tech team will work on design and implement the Check-in and Check-out functions and improve our LibraryMember and librarian system in our library management system.',
           'image': None}
     ]
     return render(request, 'library/homepage.html', {
@@ -70,8 +70,14 @@ def search(request):
     
 # Connect to Database and get all objects from bookitems table
 def getAllBookitems():
-    Bookitems.objects.all()
+    return Bookitems.objects.all()
 
+"""
+Function name: loginpage 
+Function description: rendering user login page. When users submit the login form, it will search the matched username and password in the User table. After finding matched user, users will be redirected to home page.
+Otherwise, users will receive message "Username/Password is incorrect". 
+Note: Login Page Completed.
+"""
 @unauthenticated_user
 def loginpage(request):
     if request.method == 'POST':
@@ -86,7 +92,12 @@ def loginpage(request):
 
     context = {}
     return render(request, 'library/login.html', context)
-
+"""
+Function name: registerpage 
+Function description: rendering user register page. When users submit the register form, it will create new user in the user table and LibraryMember table.
+LibraryMembers will be directed to login page.
+Note: Register page needs modifications. 
+"""
 @unauthenticated_user
 def registerpage(request):
     form = CreateUserForm()
@@ -95,7 +106,7 @@ def registerpage(request):
         if form.is_valid():
             user=form.save()
             username = form.cleaned_data.get('username')
-            group=Group.objects.get(name='member')
+            group=Group.objects.get(name='LibraryMember')
             user.groups.add(group)
             LibraryMember.objects.create(
                 user=user,
@@ -107,12 +118,21 @@ def registerpage(request):
     context = {'form': form}
     return render(request, 'library/register.html', context)
 
+"""
+Function name: logoutuser 
+Function description: logout users and redirect to login page after logout
+"""
 def logoutuser(request):
     logout(request)
     return redirect('/login/')
 
+"""
+Function name: LibraryMemberpanel 
+Function description: rendering LibraryMemberpanel page. Only LibraryMembers can access to LibraryMemberpanel page and only when LibraryMembers login, they are able to access this page.
+Note: LibraryMember panel page needs modifications. 
+"""
 #@login_required(login_url='/login/')
-#@allowed_user(allowed_roles=['member'])
+#@allowed_user(allowed_roles=['LibraryMember'])
 def memberpanel(request):
     bookitems=[{
         'title': "Harry Potter and the Sorcerer's Stone",
@@ -140,18 +160,32 @@ def memberpanel(request):
     }]
     user=request.user
     member=LibraryMember.objects.get(user=request.user.id)
+    feedbacks=Feedbacks.objects.filter(member_id=member.id).filter(obs=True)
     context={'user': user,
              'member':member,
-             'bookitems':bookitems}
+             'bookitems':bookitems,
+             'feedbacks':feedbacks}
     return render(request, 'library/memberpanel.html', context)
 
+"""
+Function name: librarianpanel 
+Function description: rendering librarianpanel page. Only librarian can access to librarianpanel page and only when librarian login, they are able to access this page.
+Note: Librarian panel page needs modifications. 
+"""
 #@login_required(login_url='/login/')
 #@librarian_only
 def librarianpanel(request):
     context={}
     return render(request, 'library/librarianpanel.html', context)
 
+"""
+Function name: editmemberinfo 
+Function description: rendering user editLibraryMemberinfo page. When users submit the update_user_info form, it will update user info user table and LibraryMember table by using 
+UserUpdateForm and MemberUpdateForm. Members will be redirected to memberpanel page after they updated their info.
+Note: editmemberinfo page Completed. 
+"""
 def editmemberinfo(request):
+    user_form = UserUpdateForm()
     if request.method=='POST':
         user_form=UserUpdateForm(request.POST,instance=request.user)
         member=LibraryMember.objects.get(user=request.user.id)
@@ -171,3 +205,83 @@ def editmemberinfo(request):
         'member_form':member_form
     }
     return render(request, 'library/editmemberinfo.html', context)
+
+def bookdetails(request, book_id):
+    bookitem=Bookitems.objects.get(id=book_id)
+    context={
+        "book":bookitem
+    }
+    return render(request,"library/bookdetails.html", context)
+
+def editBookDetails(request, book_id):
+    bookitem=Bookitems.objects.get(id=book_id)
+    if request.method=='POST':
+        editbook_form=BookitemForm(request.POST, instance=bookitem)
+        if editbook_form.is_valid():
+            editbook_form.save()
+            messages.success(request,'Book information has been updated!')
+            return redirect('/bookitems/'+ str(book_id))
+    else:
+        editbook_form=BookitemForm(instance=bookitem)
+    #print(bookitem)
+    context={
+        'editbook_form':editbook_form,
+        'bookitem': bookitem
+    }
+    return render(request,"library/editbookdetails.html", context)
+
+def addBook(request):
+    book_form = BookitemForm()
+    if request.method == 'POST':
+        book_form = BookitemForm(request.POST)
+        if book_form.is_valid():
+            bookitem=book_form.save()
+            messages.success(request, 'New Book was created ' + bookitem.title)
+            return redirect('/bookitems/addbook/')
+    else:
+        book_form = BookitemForm(request.POST)
+    context = {'form': book_form}
+    return render(request, "library/addbook.html", context)
+
+def deleteBook(request, book_id):
+    bookitem=Bookitems.objects.get(id=book_id)
+    bookitem.delete()
+    messages.success(request, bookitem.title+' was deleted.')
+    return redirect('/memberpanel/')
+
+def createFeedback(request):
+    form=FeedbackForm()
+    if request.method == 'POST':
+        form=FeedbackForm(request.POST)
+        if form.is_valid():
+            member=LibraryMember.objects.get(user=request.user)
+            feedback=form.save(commit=False)
+            feedback.member_id=member.id
+            feedback.save()
+            return redirect('/memberpanel/')    
+    context={'form':form}
+    return render(request, 'library/createFeedback.html', context)
+
+def updateFeedback(request, feedback_id):
+    feedback=Feedbacks.objects.get(id=feedback_id)
+    if request.method=='POST':
+        form=FeedbackForm(request.POST, instance=feedback)
+        if form.is_valid():
+            form.save()
+            messages.success(request,'Feedback has been updated!')
+            return redirect('/memberpanel/')
+    else:
+        form=FeedbackForm(instance=feedback)
+
+    context={
+        'form':form,
+        'feedback': feedback
+    }
+    return render(request,"library/updatefeedback.html", context)
+
+def deleteFeedback(request, feedback_id):
+    feedback=Feedbacks.objects.get(id=feedback_id)
+    feedback.obs=False
+    feedback.save()
+    messages.success(request, "'"+feedback.feedback_title+"'"+' was deleted.')
+    return redirect('/memberpanel/')

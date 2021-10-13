@@ -10,5 +10,12 @@ urlpatterns = [
     path('register/', views.registerpage),
     path('memberpanel/', views.memberpanel),
     path('librarianpanel/', views.librarianpanel),
-    path('editmemberinfo/', views.editmemberinfo)
+    path('editmemberinfo/', views.editmemberinfo),
+    path('bookitems/<int:book_id>', views.bookdetails),
+    path('bookitems/addbook/', views.addBook),
+    path('bookitems/editBookitemInfo/<int:book_id>', views.editBookDetails),
+    path('bookitems/deleteBookitem/<int:book_id>', views.deleteBook),
+    path('feedback/new/', views.createFeedback),
+    path('feedback/update/<int:feedback_id>', views.updateFeedback),
+    path('feedback/delete/<int:feedback_id>', views.deleteFeedback)
 ]

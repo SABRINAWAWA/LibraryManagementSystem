@@ -22,6 +22,7 @@
     <style>
         .container {
             margin-top: 6rem;
+            margin-bottom: 6rem;
         }
 
         .pageheader h2{
@@ -188,7 +189,26 @@
                 </div>
             </div>
         </section>
-        
+        <section class="row3">
+            <div class="recommendation-container" style="width: 20rem;">
+                <div class="card">
+                    <div class="card-header">
+                        Feedback <a href="/feedback/new/">Create New Feedback</a>
+                    </div>
+                    <div class="list-group">
+                        {% for feedback in feedbacks %}
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{feedback.feedback_title}}</h5>
+                        </div>
+                        <p class="mb-1">{{feedback.feedback_content}}</p>
+                        <small>{{feedback.feedback_datetime}}</small>
+                        <p><a href="/feedback/update/{{feedback.id}}">Update</a></p>
+                        <p><a href="/feedback/delete/{{feedback.id}}">Delete</a></p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
 </body>
