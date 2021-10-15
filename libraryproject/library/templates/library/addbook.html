@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,83 +7,100 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Book</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <script type="text/javascript" src="{% static 'library/javascript/library.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"
+        integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js"
+        integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/"
+        crossorigin="anonymous"></script>
+    <style>
+        .container {
+            margin-top: 6rem;
+        }
+    </style>
 </head>
 
 <body>
-    <h2>Add New Book</h2>
-    <div class="d-flex justify-content-center form_container">
-        <form method="POST" action="">
-            {% csrf_token %}
-            <div class="input-group mb-3">
-                <div class="input-group-append">
-                    <span class="input-group-text">Title</span>
+    {% include 'library/includes/navbar.html' %}
+    <div class="container">
+        <h2>Add New Book</h2>
+        <div class="d-flex justify-content-center form_container">
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <span class="input-group-text">Title</span>
+                    </div>
+                    {{form.title}}
                 </div>
-                {{form.title}}
-            </div>
-            <div class="input-group mb-3">
-                <div class="input-group-append">
-                    <span class="input-group-text">Authors</span>
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <span class="input-group-text">Authors</span>
+                    </div>
+                    {{form.authors}}
                 </div>
-                {{form.authors}}
-            </div>
-            <div class="input-group mb-3">
-                <div class="input-group-append">
-                    <span class="input-group-text">Average Rating</span>
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <span class="input-group-text">Average Rating</span>
+                    </div>
+                    {{form.average_rating}}
                 </div>
-                {{form.average_rating}}
-            </div>
-            <div class="input-group mb-2">
-                <div class="input-group-append">
-                    <span class="input-group-text">ISBN</span>
+                <div class="input-group mb-2">
+                    <div class="input-group-append">
+                        <span class="input-group-text">ISBN</span>
+                    </div>
+                    {{form.isbn}}
                 </div>
-                {{form.isbn}}
-            </div>
-            <div class="input-group mb-2">
-                <div class="input-group-append">
-                    <span class="input-group-text">Format</span>
+                <div class="input-group mb-2">
+                    <div class="input-group-append">
+                        <span class="input-group-text">Format</span>
+                    </div>
+                    {{form.format}}
                 </div>
-                {{form.format}}
-            </div>
-            <div class="input-group mb-2">
-                <div class="input-group-append">
-                    <span class="input-group-text">Description</span>
+                <div class="input-group mb-2">
+                    <div class="input-group-append">
+                        <span class="input-group-text">Description</span>
+                    </div>
+                    {{form.description}}
                 </div>
-                {{form.description}}
-            </div>
-            <div class="input-group mb-2">
-                <div class="input-group-append">
-                    <span class="input-group-text">Edition</span>
+                <div class="input-group mb-2">
+                    <div class="input-group-append">
+                        <span class="input-group-text">Edition</span>
+                    </div>
+                    {{form.edition}}
                 </div>
-                {{form.edition}}
-            </div>
-            <div class="input-group mb-2">
-                <div class="input-group-append">
-                    <span class="input-group-text">Genres</span>
+                <div class="input-group mb-2">
+                    <div class="input-group-append">
+                        <span class="input-group-text">Genres</span>
+                    </div>
+                    {{form.genres}}
                 </div>
-                {{form.genres}}
-            </div>
-            <div class="input-group mb-2">
-                <div class="input-group-append">
-                    <span class="input-group-text">Image URL</span>
+                <div class="input-group mb-2">
+                    <div class="input-group-append">
+                        <span class="input-group-text">Image URL</span>
+                    </div>
+                    {{form.img_url}}
                 </div>
-                {{form.img_url}}
-            </div>
-            <div class="input-group mb-2">
-                <div class="input-group-append">
-                    <span class="input-group-text">Stock Quantity</span>
+                <div class="input-group mb-2">
+                    <div class="input-group-append">
+                        <span class="input-group-text">Stock Quantity</span>
+                    </div>
+                    {{form.stock_quantity}}
                 </div>
-                {{form.stock_quantity}}
-            </div>
-            <div class="input-group mb-2">
-                <div class="input-group-append">
-                    <span class="input-group-text">Available Quantity</span>
+                <div class="input-group mb-2">
+                    <div class="input-group-append">
+                        <span class="input-group-text">Available Quantity</span>
+                    </div>
+                    {{form.available_quantity}}
                 </div>
-                {{form.available_quantity}}
-            </div>
-            <div class="d-flex justify-content-center mt-3 login_container">
-                <input class="btn" type="submit" value="Add">
-            </div>
-        </form>
+                <div class="d-flex justify-content-center mt-3 login_container">
+                    <input class="btn" type="submit" value="Add">
+                </div>
+            </form>
+        </div>
     </div>
 </body>
 

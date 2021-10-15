@@ -6,9 +6,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Bookitems</title>
+    <title>Edit Librarian Info</title>
+    <link rel="stylesheet" href="{% static 'library/styles/register.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
+        integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
     <script type="text/javascript" src="{% static 'library/javascript/library.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"
         integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN"
@@ -16,9 +19,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js"
         integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/"
         crossorigin="anonymous"></script>
+
     <style>
-        .container {
-            margin-top: 6rem;
+        .input-group-append>span {
+            width: 150px;
         }
     </style>
 </head>
@@ -26,83 +30,69 @@
 <body>
     {% include 'library/includes/navbar.html' %}
     <div class="container">
-        <h2>Edit Information of {{bookitem.title}}</h2>
+        <h2>Edit Librarian Info</h2>
         <form method="POST" action="">
             {% csrf_token %}
             <div class="input-group mb-3">
                 <div class="input-group-append">
-                    <span class="input-group-text">Title</span>
+                    <span class="input-group-text"><i class="fas fa-user"> User Name</i></span>
                 </div>
-                {{editbook_form.title}}
+                {{user_form.username}}
             </div>
             <div class="input-group mb-3">
                 <div class="input-group-append">
-                    <span class="input-group-text"> Authors</span>
+                    <span class="input-group-text"><i class="fas fa-id-badge"> First Name</i></span>
                 </div>
-                {{editbook_form.authors}}
+                {{user_form.first_name}}
             </div>
             <div class="input-group mb-3">
                 <div class="input-group-append">
-                    <span class="input-group-text"> Average Rating</span>
+                    <span class="input-group-text"><i class="fas fa-id-badge"> Laste Name</i></span>
                 </div>
-                {{editbook_form.average_rating}}
+                {{user_form.last_name}}
             </div>
-            <div class="input-group mb-3">
+            <div class="input-group mb-2">
                 <div class="input-group-append">
-                    <span class="input-group-text"> ISBN </span>
+                    <span class="input-group-text"><i class="fas fa-envelope-square"> Email</i></span>
                 </div>
-                {{editbook_form.isbn}}
+                {{user_form.email}}
             </div>
-            <div class="input-group mb-3">
+            <div class="input-group mb-2">
                 <div class="input-group-append">
-                    <span class="input-group-text"> Format </span>
+                    <span class="input-group-text"><i class="fas fa-key"> Phone Number</i></span>
                 </div>
-                {{editbook_form.format}}
+                {{librarian_form.phone}}
             </div>
-            <div class="input-group mb-3">
+            <div class="input-group mb-2">
                 <div class="input-group-append">
-                    <span class="input-group-text"> Description </span>
+                    <span class="input-group-text"><i class="fas fa-key"> Address</i></span>
                 </div>
-                {{editbook_form.description}}
+                {{librarian_form.address}}
             </div>
-            <div class="input-group mb-3">
+            <div class="input-group mb-2">
                 <div class="input-group-append">
-                    <span class="input-group-text"> Edition </span>
+                    <span class="input-group-text"><i class="fas fa-key"> Birth Date</i></span>
                 </div>
-                {{editbook_form.edition}}
+                {{librarian_form.birthdate}}
             </div>
-            <div class="input-group mb-3">
+            <div class="input-group mb-2">
                 <div class="input-group-append">
-                    <span class="input-group-text"> Genres </span>
+                    <span class="input-group-text"><i class="fas fa-key"> Position</i></span>
                 </div>
-                {{editbook_form.genres}}
+                {{librarian_form.position}}
             </div>
-            <div class="input-group mb-3">
+            <div class="input-group mb-2">
                 <div class="input-group-append">
-                    <span class="input-group-text"> Image URL </span>
+                    <span class="input-group-text"><i class="fas fa-key"> Logo</i></span>
                 </div>
-                {{editbook_form.img_url}}
+                {{librarian_form.logo}}
             </div>
-            <div class="input-group mb-3">
-                <div class="input-group-append">
-                    <span class="input-group-text"> Stock Quantity </span>
-                </div>
-                {{editbook_form.stock_quantity}}
-            </div>
-            <div class="input-group mb-3">
-                <div class="input-group-append">
-                    <span class="input-group-text"> Available Quantity </span>
-                </div>
-                {{editbook_form.available_quantity}}
-            </div>
-
             <div class="d-flex justify-content-center mt-3 login_container">
-                <input class="btn login_btn" type="submit" value="Update Bookitem Info">
+                <input class="btn login_btn" type="submit" value="Update Account Info">
             </div>
 
         </form>
     </div>
-
     <script>
         var form_fields = document.getElementsByTagName('input')
 

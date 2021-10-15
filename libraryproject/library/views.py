@@ -4,10 +4,12 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
+from django.views import View
+from django.http import HttpResponse
 
-from .models import Bookitems, LibraryMember, Feedbacks
+from .models import Bookitems, LibraryMember, Feedbacks, Librarian, Notification
 from .filters import BookitemsFilter
-from .forms import CreateUserForm, UserUpdateForm, MemberUpdateForm, BookitemForm, FeedbackForm
+from .forms import CreateUserForm, UserUpdateForm, MemberUpdateForm, BookitemForm, FeedbackForm, LibarianUpdateForm, NotificationForm
 from .decorators import unauthenticated_user, allowed_user, librarian_only
 
 """
@@ -106,7 +108,7 @@ def registerpage(request):
         if form.is_valid():
             user=form.save()
             username = form.cleaned_data.get('username')
-            group=Group.objects.get(name='LibraryMember')
+            group=Group.objects.get(name='member')
             user.groups.add(group)
             LibraryMember.objects.create(
                 user=user,
@@ -285,3 +287,78 @@ def deleteFeedback(request, feedback_id):
     feedback.save()
     messages.success(request, "'"+feedback.feedback_title+"'"+' was deleted.')
     return redirect('/memberpanel/')
+
+def registerLibrarian(request):
+    form = CreateUserForm()
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            user=form.save()
+            username = form.cleaned_data.get('username')
+            group=Group.objects.get(name='librarian')
+            user.groups.add(group)
+            Librarian.objects.create(
+                user=user,
+            )
+            messages.success(request, 'Librarian Account was created for ' + username)
+            return redirect('/login/')
+    else:
+        form = CreateUserForm()
+    context = {'form': form}
+    return render(request, 'library/registerLibrarian.html', context)
+
+def editLibrarianInfo(request):
+    user_form = UserUpdateForm()
+    if request.method=='POST':
+        user_form=UserUpdateForm(request.POST,instance=request.user)
+        librarian=Librarian.objects.get(user=request.user.id)
+        librarian_form=LibarianUpdateForm(request.POST, instance=librarian)
+        if user_form.is_valid() and librarian_form.is_valid():
+            user_form.save()
+            librarian_form.save()
+            messages.success(request,'Your account information has been updated!')
+            return redirect('/librarypanel/')
+    else:
+        user_form=UserUpdateForm(instance=request.user)
+        librarian=Librarian.objects.get(user=request.user.id)
+        librarian_form=LibarianUpdateForm(instance=librarian)
+
+    context={
+        'user_form':user_form,
+        'librarian_form':librarian_form
+    }
+    return render(request, 'library/editLibrarianInfo.html', context)
+    
+def checkNotification(request, notification_id):
+    # Get notification item from table notification by notification primary key -- id
+    notification=Notification.objects.get(id=notification_id)
+    # Set user_has_been to true so it won't show up in the notification badge
+    notification.user_has_seen=True
+    notification.save()
+    # Sent the argument to html file
+    context={
+        "notification":notification
+    }
+    return render(request,"library/viewNotification.html", context)
+
+def deleteNotification(request, notification_id):
+    notification=Notification.objects.get(pk=notification_id)
+    notification.user_has_seen=True
+    notification.save()
+    return redirect(request.META.get('HTTP_REFERER'))
+
+def sendNotification(request):
+    NotificationForm
+    form=NotificationForm()
+    if request.method == 'POST':
+        form=NotificationForm(request.POST)
+        if form.is_valid():
+            from_Librarian=Librarian.objects.get(user=request.user)
+            notification=form.save(commit=False)
+            notification.from_Librarian_id=from_Librarian.id
+            notification.notification_type=4
+            notification.save()
+            return redirect(request.META.get('HTTP_REFERER')) 
+    context={'form':form}
+    return render(request, "library/sendNotification.html", context)
+

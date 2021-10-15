@@ -2,7 +2,7 @@ from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.contrib.auth.models import User
-from .models import Feedbacks, LibraryMember, Bookitems
+from .models import Feedbacks, LibraryMember, Bookitems, Librarian, Notification
 
 class CreateUserForm(UserCreationForm):
     last_name=forms.CharField(max_length=100)
@@ -54,3 +54,28 @@ class FeedbackForm(forms.ModelForm):
     class Meta:
         model=Feedbacks
         fields = ['feedback_content', 'feedback_title']
+
+position_choices =(
+    ("Librarian", "Librarian"),
+    ("Library Technician", "Library Technician"),
+    ("Library Assistant", "Library Assistant"),
+    ("Library Director", "Library Director"),
+)
+
+class LibarianUpdateForm(forms.ModelForm):
+    phone=forms.CharField(max_length=20)
+    address=forms.CharField(max_length=100)
+    birthdate=forms.DateField()
+    position=forms.MultipleChoiceField(choices = position_choices)
+    logo=forms.CharField(max_length=200)
+    class Meta:
+        model=Librarian
+        fields=['phone', 'address', 'birthdate','position','logo']
+        
+class NotificationForm(forms.ModelForm):
+    to_member=forms.ModelChoiceField(queryset=LibraryMember.objects.all(), to_field_name="user")
+    Title=forms.CharField(max_length=255)
+    content=forms.Textarea()
+    class Meta:
+        model=Notification
+        fields=['to_member', 'Title', 'content']

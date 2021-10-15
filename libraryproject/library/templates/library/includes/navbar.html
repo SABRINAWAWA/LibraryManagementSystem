@@ -1,8 +1,63 @@
+{% load custom_tags %}
 <style type="text/css">
-    .msg{
+    .msg {
         color: white;
-        font-size:18px;
+        font-size: 18px;
         margin-right: 20px;
+    }
+
+    .notification-badge {
+        transition: 0.3s;
+    }
+
+    .notification-badge:hover {
+        cursor: pointer;
+        opacity: 0.75;
+        transition: 0.3s;
+    }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        position: absolute;
+        background-color: #f1f1f1;
+        min-width: 300px;
+        box-shadow: 0px 8px 8px 0px rgba(0, 0, 0, 0.2);
+        font-size: 0.9rem;
+    }
+
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+    .dropdown-content a:hover {
+        background-color: #ddd;
+    }
+
+    .dropdown-item-parent {
+        position: relative;
+        display: block;
+    }
+
+    .dropdown-item-close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 1.8rem;
+        padding-right: 5px;
+        transition: 0.3s;
+    }
+
+    .dropdown-item-close a:hover {
+        color: red;
+        transition: 0.3s;
+        background-color: rgba(255, 255, 255, 0.11);
     }
 </style>
 
@@ -14,24 +69,57 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ml-auto">
-            <a class="nav-item nav-link active" href="/home/">Home</a>
-            {% if request.user.groups.all.0.name == "member" %}
-            <a class="nav-item nav-link" href="/memberpanel/">Member Portal</a>
-            {% endif %}
-            {% if request.user.groups.all.0.name == "librarian" %}
-            <a class="nav-item nav-link" href="/librarianpanel/">Librarian Portal</a>
-            {% endif %}
-            <a class="nav-item nav-link" href="/searchcatalog/">Search</a>
-            <a class="nav-item nav-link" href="#">Contact</a>
-            {% if user.is_authenticated %}
-            <a class="nav-item nav-link" href="/logout/">Log out</a>
-            {% else %}
-            <a class="nav-item nav-link" href="/login/">Login</a>
-            {% endif %}
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-item nav-link active" href="/home/">Home</a>
+                </li>
+                {% if request.user.groups.all.0.name == "member" %}
+                <li class="nav-item">
+                    <a class="nav-item nav-link" href="/memberpanel/">Member Portal</a>
+                </li>
+                {% endif %}
+                {% if request.user.groups.all.0.name == "librarian" %}
+                <li class="nav-item">
+                    <a class="nav-item nav-link" href="/librarianpanel/">Librarian Portal</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-item nav-link" href="/searchcatalog/">Search</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-item nav-link" href="#">Contact</a>
+                </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-item nav-link" href="/logout/">Log out</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-item nav-link" href="/login/">Login</a>
+                </li>
+                {% endif %}
+                {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        {{request.user.username}}
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">Rent Book</a></li>
+                        <li><a class="dropdown-item" href="#">Return Book</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#">User Info</a></li>
+                    </ul>
+                </li>
+
+                {% if request.user.groups.all.0.name == "member" %}
+                <li class="nav-item">
+                    {% show_notifications %}
+                </li>
+                {% endif %}
+                {% endif %}
         </div>
     </div>
-    {% if user.is_authenticated %}
-    <span class="msg">Hello, {{request.user.username}}</span>
-    {% endif %}
-    <span></span>
 </nav>

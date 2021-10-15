@@ -12,6 +12,7 @@
         integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
         integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+    <script type="text/javascript" src="{% static 'library/javascript/library.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"
         integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN"
         crossorigin="anonymous"></script>
@@ -25,8 +26,8 @@
             margin-bottom: 6rem;
         }
 
-        .pageheader h2{
-            text-align:center;
+        .pageheader h2 {
+            text-align: center;
         }
 
         .row1 {
@@ -34,71 +35,124 @@
             flex-direction: row;
             flex-wrap: wrap;
             margin-top: 1rem;
-            margin-bottom:3rem;
-            justify-content:center;
-            align-items:flex-start;
+            margin-bottom: 3rem;
+            justify-content: center;
+            align-items: flex-start;
         }
 
-        .bookdata{
+        .bookdata {
             display: flex;
             flex-direction: row;
         }
 
-        .bookdata .card{
+        .bookdata .card {
             margin-left: 15px;
         }
 
-        .bookdata .card .card-body .card-title{
-            text-align:center;
+        .bookdata .card .card-body .card-title {
+            text-align: center;
         }
 
-        .bookdata .card .card-body .card-text{
-            text-align:center;
+        .bookdata .card .card-body .card-text {
+            text-align: center;
             font-size: 5rem;
         }
 
 
-        .bookdata .card .card-body .card-link{
-            text-align:center;
+        .bookdata .card .card-body .card-link {
+            text-align: center;
         }
 
-        .row2{
+        .row2 {
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;
             margin-top: 1rem;
-            margin-bottom:3rem;
-            justify-content:center;
-            align-items:flex-start;
+            margin-bottom: 3rem;
+            justify-content: center;
+            align-items: flex-start;
         }
 
-        .rentedbook{
-            background-color:#e9c46a;
+        .rentedbook {
+            background-color: #e9c46a;
         }
 
-        .returnedbook{
-            background-color:#f4a261;
+        .returnedbook {
+            background-color: #f4a261;
         }
 
-        .reservedbook{
-            background-color:#2a9d8f;
+        .reservedbook {
+            background-color: #2a9d8f;
         }
 
-        .shelf .recommendation-container{
+        .column2 {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .row3 {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            margin-bottom: 3rem;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .feedback {
+            margin-left: 1rem;
+            margin-top: 1rem;
+        }
+
+        .feedback .card .card-header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .feedback .card .card-header h3 {
+            font-weight: bold;
+        }
+
+        .feedback-item {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .feedback-item .feedback-content {
+            width: 27rem;
+        }
+
+        .feedback-item .feedback-button {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feedback-item .feedback-button a {
+            margin-bottom: 1rem;
+        }
+
+        .shelf .recommendation-container {
             margin: 1rem 1rem;
         }
 
-        .recommendation-container{
+        .recommendation-container {
             margin-left: 1rem;
         }
-        .shelf .card-header{
-            text-align:center;
+
+        .shelf .card-header {
+            text-align: center;
         }
     </style>
 </head>
 
 <body>
     {% include 'library/includes/navbar.html' %}
+
     <div class="container">
         {% for message in messages %}
         <p id="message">
@@ -111,7 +165,7 @@
         </section>
 
         <section class="row1">
-            <div class="card profile" style="width: 18rem;">
+            <div class="card profile" style="width: 20rem;">
                 <img class="card-img-top"
                     src="https://images.unsplash.com/photo-1525253086316-d0c936c814f8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1170&q=80"
                     alt="Card image cap">
@@ -123,36 +177,36 @@
                     <li class="list-group-item">Phone Number: {{member.phone}}</li>
                 </ul>
                 <div class="card-body">
-                    <a href="/editmemberinfo/">Edit Member Info</a>
-                    <a href="#" class="card-link">Change Password</a>
+                    <a href="/editmemberinfo/" class="card-link btn btn-warning btn-sm">Edit Member Info</a>
+                    <a href="/reset_password/" class="card-link btn btn-danger btn-sm">Change Password</a>
                 </div>
             </div>
-
-            <div class="bookdata">
-                <div class="card rentedbook" style="width: 12rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">Book Rented</h5>
-                        <p class="card-text">0</p>
-                        <p class="card-link"><a href="#">Details</a></p>
+            <div class="column2">
+                <div class="bookdata">
+                    <div class="card rentedbook" style="width: 13rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">Book Rented</h5>
+                            <p class="card-text">0</p>
+                            <p class="card-link"><a href="#">Details</a></p>
+                        </div>
                     </div>
-                </div>
-                <div class="card reservedbook" style="width: 12rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">Book Reserved</h5>
-                        <p class="card-text">0</p>
-                        <p class="card-link"><a href="#">Details</a></p>
+                    <div class="card reservedbook" style="width: 13rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">Book Reserved</h5>
+                            <p class="card-text">0</p>
+                            <p class="card-link"><a href="#">Details</a></p>
+                        </div>
                     </div>
-                </div>
-                <div class="card returnedbook" style="width: 12rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">Book Returned</h5>
-                        <p class="card-text">0</p>
-                        <p class="card-link"><a href="#">Details</a></p>
+                    <div class="card returnedbook" style="width: 13rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">Book Returned</h5>
+                            <p class="card-text">0</p>
+                            <p class="card-link"><a href="#">Details</a></p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
-
         <section class="row2">
             <div class="card shelf" style="width: 35rem;">
                 <div class="card-header">
@@ -171,7 +225,7 @@
                 </ul>
             </div>
 
-            <div class="recommendation-container" style="width: 20rem;">
+            <div class="recommendation-container" style="width: 24rem;">
                 <div class="card">
                     <div class="card-header">
                         Recommendation List
@@ -190,21 +244,67 @@
             </div>
         </section>
         <section class="row3">
-            <div class="recommendation-container" style="width: 20rem;">
+            <div class="feedback" style="width: 35rem;">
                 <div class="card">
                     <div class="card-header">
-                        Feedback <a href="/feedback/new/">Create New Feedback</a>
+                        <h3>Review</h3>
                     </div>
                     <div class="list-group">
                         {% for feedback in feedbacks %}
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">{{feedback.feedback_title}}</h5>
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="feedback-item">
+                                <div class="feedback-content">
+                                    <h5 class="mb-1">{{feedback.feedback_title}}</h5>
+                                    <p class="feedback-content-detail">{{feedback.feedback_content}}</p>
+                                    <small>{{feedback.feedback_datetime}}</small>
+                                </div>
+                                <div class="feedback-button">
+                                    <a href="/feedback/update/{{feedback.id}}" class="btn btn-warning btn-sm"
+                                        role="button">Update</a>
+                                    <a href="/feedback/delete/{{feedback.id}}" class="btn btn-danger btn-sm"
+                                        role="button">Delete</a>
+                                </div>
+                            </div>
                         </div>
-                        <p class="mb-1">{{feedback.feedback_content}}</p>
-                        <small>{{feedback.feedback_datetime}}</small>
-                        <p><a href="/feedback/update/{{feedback.id}}">Update</a></p>
-                        <p><a href="/feedback/delete/{{feedback.id}}">Delete</a></p>
                         {% endfor %}
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-grid gap-2">
+                            <a class="btn btn-outline-primary" type="button" href="/feedback/">View all reviews</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="feedback" style="width: 35rem;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Feedback</h3>
+                        <span id="createNewFeedback" class="mr-0 ml-auto"><a href="/feedback/new/"
+                                class="btn btn-primary" role="button">Create New Feedback</a></span>
+                    </div>
+                    <div class="list-group">
+                        {% for feedback in feedbacks %}
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="feedback-item">
+                                <div class="feedback-content">
+                                    <h5 class="mb-1">{{feedback.feedback_title}}</h5>
+                                    <p class="feedback-content-detail">{{feedback.feedback_content}}</p>
+                                    <small>{{feedback.feedback_datetime}}</small>
+                                </div>
+                                <div class="feedback-button">
+                                    <a href="/feedback/update/{{feedback.id}}" class="btn btn-warning btn-sm"
+                                        role="button">Update</a>
+                                    <a href="/feedback/delete/{{feedback.id}}" class="btn btn-danger btn-sm"
+                                        role="button">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-grid gap-2">
+                            <a class="btn btn-outline-primary" type="button" href="/feedback/">View all feedbacks</a>
+                        </div>
                     </div>
                 </div>
             </div>

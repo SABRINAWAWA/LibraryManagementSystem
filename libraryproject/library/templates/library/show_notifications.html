@@ -1,0 +1,13 @@
+<div class="dropdown">
+    <span class="badge bg-primary notification-badge" onclick="showNotifications()">{{notifications.count}}</span>
+    <div class="dropdown-content d-none" id="notification-container">
+        {% for notification in notifications %}
+        {% if notification.notification_type == 4%}
+        <div class="dropdown-item-parent">
+            <a href="{% url 'check-notification' notification.pk %}">Librarian @{{notification.from_Librarian}} sent your a message: {{notification.Title}}</a>
+            <span class="dropdown-item-close"> <a href="{% url 'delete-notification' notification.pk %}">  &times;  </a> </span>
+        </div>
+        {% endif%}
+        {% endfor %}
+    </div>
+</div>

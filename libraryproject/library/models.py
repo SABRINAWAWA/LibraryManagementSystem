@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db import models
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
@@ -33,16 +34,16 @@ class LibraryMember(models.Model):
         return self.user.username
 
 class Librarian(models.Model):
-    user=models.OneToOneField(User, null=True, on_delete=models.CASCADE) 
-    name=models.CharField(_('name'), max_length=100, default='NoName')
-    username=models.CharField(_('username'),max_length=200, default='NoUsername', unique=True)
-    password=models.CharField(max_length=200, null=True)
-    email=models.CharField(max_length=200, null=True)
+    user=models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    phone=models.CharField(max_length=200, null=True) 
     address=models.CharField(_('address'), max_length=200, null=True)
-    logo=models.CharField(_("Logo"), max_length=200, null=True)
+    birthdate=models.DateField(null=True)
+    position=models.CharField(max_length=200, null=True)
+    logo=models.CharField(_("Logo"), max_length=200, null=True, default="https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1374&q=80")
+    date_created=models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
-        return self.librarian.name
+        return self.user.username
     
 class Rented_books(models.Model):    
     book=models.ForeignKey(Bookitems, null=True, on_delete=models.PROTECT)
@@ -83,3 +84,15 @@ class Feedbacks(models.Model):
     obs=models.BooleanField(_('OBS'), default=True)
     def __str__(self):
         return f'{self.member.user.username}'
+    
+class Notification(models.Model):
+    # 1=returned book, 2=reserved book, 3=rented book
+    notification_type=models.IntegerField(_('Notification Type'))
+    to_member=models.ForeignKey(LibraryMember, related_name='notification_to', on_delete=models.CASCADE, null=True)
+    from_Librarian=models.ForeignKey(Librarian, related_name='notification_from', on_delete=models.CASCADE, null=True)
+    Title=models.CharField(max_length=255)
+    content=models.TextField(max_length=255)
+    reservedBook=models.ForeignKey(Reserved_books,blank=True, on_delete=models.CASCADE,null=True)
+    rentedBook=models.ForeignKey(Rented_books,blank=True,on_delete=models.CASCADE, null=True)
+    date=models.DateTimeField(default=timezone.now, null=True)
+    user_has_seen=models.BooleanField(default=False)

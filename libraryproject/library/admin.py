@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import Bookitems, Feedbacks, Librarian, LibraryMember, LibraryMember, Rented_books, Reserved_books, hist_rented_books
+from .models import Bookitems, Feedbacks, Librarian, LibraryMember, LibraryMember, Rented_books, Reserved_books, hist_rented_books, Notification
 
 class BookitemsAdmin(admin.ModelAdmin):
     list_display=('id','title', 'authors', 'isbn')
@@ -13,10 +13,17 @@ class MembersAdmin(admin.ModelAdmin):
 class FeedbacksAdmin(admin.ModelAdmin):
     list_display=('id','member', 'feedback_title')
     
+class LibrarianAdmin(admin.ModelAdmin):
+    list_display=('id','user')
+    
+class NotificationAdmin(admin.ModelAdmin):
+    list_display=('id','notification_type', 'Title','date')
+    
 admin.site.register(Bookitems, BookitemsAdmin)
 admin.site.register(LibraryMember, MembersAdmin)
-admin.site.register(Librarian)
+admin.site.register(Librarian, LibrarianAdmin)
 admin.site.register(Rented_books)
 admin.site.register(hist_rented_books)
 admin.site.register(Reserved_books)
 admin.site.register(Feedbacks, FeedbacksAdmin)
+admin.site.register(Notification, NotificationAdmin)

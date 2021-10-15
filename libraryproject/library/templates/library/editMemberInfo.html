@@ -12,6 +12,7 @@
         integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
         integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+    <script type="text/javascript" src="{% static 'library/javascript/library.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"
         integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN"
         crossorigin="anonymous"></script>
@@ -19,11 +20,11 @@
         integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/"
         crossorigin="anonymous"></script>
 
-        <style>
-            .input-group-append>span{
-                width:150px;
-            }
-        </style>
+    <style>
+        .input-group-append>span {
+            width: 150px;
+        }
+    </style>
 </head>
 
 <body>
@@ -83,9 +84,9 @@
     <script>
         var form_fields = document.getElementsByTagName('input')
 
-		for (var field in form_fields){	
-			form_fields[field].className += ' form-control'
-		}
+        for (var field in form_fields) {
+            form_fields[field].className += ' form-control'
+        }
     </script>
 </body>
 
