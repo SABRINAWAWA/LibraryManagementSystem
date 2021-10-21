@@ -73,9 +73,8 @@ class LibarianUpdateForm(forms.ModelForm):
         fields=['phone', 'address', 'birthdate','position','logo']
         
 class NotificationForm(forms.ModelForm):
-    to_member=forms.ModelChoiceField(queryset=LibraryMember.objects.all(), to_field_name="user")
     Title=forms.CharField(max_length=255)
     content=forms.Textarea()
     class Meta:
         model=Notification
-        fields=['to_member', 'Title', 'content']
+        fields=['Title', 'content']

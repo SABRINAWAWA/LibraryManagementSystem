@@ -48,33 +48,36 @@ class Librarian(models.Model):
 class Rented_books(models.Model):    
     book=models.ForeignKey(Bookitems, null=True, on_delete=models.PROTECT)
     title=models.CharField(_('title'), max_length=255, default='NoTitle')
-    member=models.OneToOneField(LibraryMember, null=False, on_delete=models.PROTECT)
+    member=models.ForeignKey(LibraryMember, null=False, on_delete=models.PROTECT)
     rented_date=models.DateField(_('Rented Date'), default="YYYY-MM-DD", null=True)
     return_date=models.DateField(_('Returned Date'), default="YYYY-MM-DD", null=True)
-
+    obs=models.BooleanField(_('OBS'), default=True)
+    lateReturn=models.BooleanField(_('Late Return'), default=False)
     def __str__(self):
-        return f'{self.title}'
+        return self.title
     
 class hist_rented_books(models.Model):    
     book=models.ForeignKey(Bookitems, null=True, on_delete=models.PROTECT)
     title=models.CharField(_('title'), max_length=255, default='NoTitle')
-    member=models.OneToOneField(LibraryMember, null=False, on_delete=models.PROTECT)
+    member=models.ForeignKey(LibraryMember, null=False, on_delete=models.PROTECT)
     rented_date=models.DateField(_('Rented Date'), default="YYYY-MM-DD", null=True)
     return_date=models.DateField(_('Returned Date'), default="YYYY-MM-DD", null=True)
-
+    obs=models.BooleanField(_('OBS'), default=True)
     def __str__(self):
-        return f'{self.title}'
+        return self.title
     
 class Reserved_books(models.Model): 
     book=models.ForeignKey(Bookitems, null=True, on_delete=models.PROTECT)
     title=models.CharField(_('title'), max_length=255, default='NoTitle')
-    member=models.OneToOneField(LibraryMember, null=False, on_delete=models.PROTECT)
+    member=models.ForeignKey(LibraryMember, null=False, on_delete=models.PROTECT)
     reserved_date=models.DateField(_('Reserved Date'), default="YYYY-MM-DD", null=True)
     deadline=models.DateField(_('Deadline'), default="YYYY-MM-DD", null=True)
     available_rent_date=models.DateField(_('Available Rent Date'), default="YYYY-MM-DD", null=True)
-
+    obs=models.BooleanField(_('OBS'), default=True)
+    canReserve=models.BooleanField(_('Can Reserve'), default=False)
+    
     def __str__(self):
-        return f'{self.title}'
+        return self.title
     
 class Feedbacks(models.Model):    
     member=models.ForeignKey(LibraryMember, null=False, on_delete=models.CASCADE)

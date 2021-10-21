@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Search Catalog allows users to search books they want to rent.">
+    <title>Library-Search Catalog</title>
+    <link rel="stylesheet" href="{% static 'library/styles/search-catalog.css' %}">
+    <link rel="stylesheet" href="{% static 'library/styles/footer.css' %}">
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <script type="text/javascript" src="{% static 'library/javascript/library.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"
+        integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js"
+        integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/"
+        crossorigin="anonymous"></script>
+    <style>
+        .body-container {
+            margin-top: 6rem;
+            margin-bottom: 6rem;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'library/includes/navbar.html' %}
+
+    <div class="body_container">
+        <section class="header">
+            <h1>Search Catalog</h1>
+        </section>
+
+        <div class="container">
+            <section class="search_input">
+                <h3>Seach a book: </h3>
+                <form method="GET" action=".">
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <div class="input-group">
+                                <input class="form-control py-2 border-right-0 border" type="search" name="title_contains" placeholder="Title contains..." />
+                                <span class="input-group-append">
+                                    <div class="input-group-text bg-transparent">
+                                        <i class="fa fa-search"></i>
+                                    </div>
+                                </span>
+                            </div>
+                        </div>        
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <div class="input-group">
+                                <input class="form-control py-2 border-right-0 border" type="search" name="author_contains" placeholder="Author contains..." />
+                                <span class="input-group-append">
+                                    <div class="input-group-text bg-transparent">
+                                        <i class="fa fa-search"></i>
+                                    </div>
+                                </span>
+                            </div>
+                        </div>        
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <div class="input-group">
+                                <input class="form-control py-2 border-right-0 border" type="search" name="isbn_exact" placeholder="ISBN exact..." />
+                                <span class="input-group-append">
+                                    <div class="input-group-text bg-transparent">
+                                        <i class="fa fa-search"></i>
+                                    </div>
+                                </span>
+                            </div>
+                        </div>        
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <div class="input-group">
+                                <input class="form-control py-2 border-right-0 border" type="search" name="category_contains" placeholder="Category is..." />
+                                <span class="input-group-append">
+                                    <div class="input-group-text bg-transparent">
+                                        <i class="fa fa-search"></i>
+                                    </div>
+                                </span>
+                            </div>
+                        </div>        
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Search</button>
+                  </form>            
+            </section>
+            
+            {%ifnotequal searchedbook ''%}
+            <section class="search_output">
+                {% for bookitem in searchedbook %}
+                <div class="card bookitem" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{bookitem.title}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">ISBN: {{bookitem.isbn}}</h6>
+                        <p class="card-text">Author: {{bookitem.authors}}</p>
+                        <a href="/bookitems/{{bookitem.id}}" class="card-link" target="_black">View</a>
+                        {% if request.user.groups.all.0.name == "member" %}
+                        <a href="#" class="card-link">Reserve</a>
+                        {% else %}
+                        <a href="/bookitems/editBookitemInfo/{{bookitem.id}}" class="card-link">Update</a>
+                        <a href="/bookitems/deleteBookitem/{{bookitem.id}}" class="card-link">Delete</a>
+                        {% endif%}
+                    </div>
+                </div>
+                {% endfor %}
+            </section>
+            {%endifnotequal%}
+        </div>
+    </div>
+
+
+</body>
+
+</html>

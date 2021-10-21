@@ -4,7 +4,8 @@ from . import views
 
 urlpatterns = [
     path('home/',views.home),
-    path('searchcatalog/', views.search),
+    path('searchbooks/', views.searchBooks),
+    path('searchusers/', views.searchUsers),
     
     # Library member-related links
     path('login/', views.loginpage),
@@ -34,13 +35,17 @@ urlpatterns = [
     #Notification Feature
     path('notification/<int:notification_id>', views.checkNotification, name="check-notification"),
     path('notification/delete/<int:notification_id>', views.deleteNotification,name="delete-notification"),
-    path('notification/new/', views.sendNotification, name="new-notification"),
+    path('notification/new/<int:user_id>', views.sendNotification, name="new-notification"),
     
     #Reset Password Feature
     path('reset_password/', auth_views.PasswordResetView.as_view(template_name="library/password_reset.html"), name="reset_password"),
     path('reset_password_sent/', auth_views.PasswordResetDoneView.as_view(template_name="library/password_reset_sent.html"), name="password_reset_done"),
     path('reset/<uidb64>/<token>', auth_views.PasswordResetConfirmView.as_view(template_name="library/password_reset_form.html"), name="password_reset_confirm"),
     path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(template_name="library/password_reset_done.html"), name="password_reset_complete"),
+    
+    #check-in/ check-out feature
+    path('check_in/<int:user_id>', views.checkinPage),
+    path('check_out/<int:user_id>', views.checkoutPage),
 ]
 
 '''

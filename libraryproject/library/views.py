@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
@@ -6,8 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.views import View
 from django.http import HttpResponse
+from django.db.models import Q
+from django.contrib.auth.models import User
 
-from .models import Bookitems, LibraryMember, Feedbacks, Librarian, Notification
+from .models import Bookitems, LibraryMember, Feedbacks, Librarian, Notification, Reserved_books, Rented_books
 from .filters import BookitemsFilter
 from .forms import CreateUserForm, UserUpdateForm, MemberUpdateForm, BookitemForm, FeedbackForm, LibarianUpdateForm, NotificationForm
 from .decorators import unauthenticated_user, allowed_user, librarian_only
@@ -57,7 +60,6 @@ Function name: search
 Function description: rendering search catalog page
 Note: Using BookitemsFilter class in filters.py to generate the filter result. 
 """
-
 def search(request):
     searchedbook = []
     bookitems = getAllBookitems() 
@@ -70,9 +72,91 @@ def search(request):
         'searchedbook': searchedbook
     })
     
+def is_valid_params(param):
+    return param !='' and param is not None
+
+def searchBooks(request):
+    # Get all bookitems from bookitems table
+    bookitems = getAllBookitems()
+    # preset searchedbook to an empty string
+    searchedbook=''
+    # getting all search input from the form
+    title_contains_query=request.GET.get('title_contains')
+    author_contains_query=request.GET.get('author_contains')
+    isbn_exact_query=request.GET.get('isbn_exact')
+    category_contains_query=request.GET.get('category_contains')
+    # check all possiblilities of search bookitems
+    # when all fields input fulfills out
+    if is_valid_params(title_contains_query) and is_valid_params(author_contains_query) and is_valid_params(isbn_exact_query) and is_valid_params(category_contains_query):
+        searchedbook=bookitems.filter( Q(title__icontains=title_contains_query) & Q(authors__icontains=author_contains_query) & Q(isbn=isbn_exact_query) & Q(genres__icontains=category_contains_query)).distinct()
+    # when three of four inputs fulfill out
+    # genres, authors, and isbn
+    elif is_valid_params(author_contains_query) and is_valid_params(isbn_exact_query) and is_valid_params(category_contains_query):
+        searchedbook=bookitems.filter( Q(authors__icontains=author_contains_query) & Q(isbn=isbn_exact_query) & Q(genres__icontains=category_contains_query)).distinct()
+    # title, authors, and isbn
+    elif is_valid_params(title_contains_query) and is_valid_params(author_contains_query) and is_valid_params(isbn_exact_query):
+        searchedbook=bookitems.filter( Q(title__icontains=title_contains_query) & Q(isbn=isbn_exact_query) & Q(authors__icontains=author_contains_query)).distinct()
+    # title, isbn, and genres
+    elif is_valid_params(title_contains_query) and is_valid_params(isbn_exact_query) and is_valid_params(category_contains_query):
+        searchedbook=bookitems.filter( Q(title__icontains=title_contains_query) & Q(isbn=isbn_exact_query) & Q(genres__icontains=category_contains_query)).distinct()
+    # title, authors, and genres
+    elif is_valid_params(title_contains_query) and is_valid_params(author_contains_query) and is_valid_params(category_contains_query):
+        searchedbook=bookitems.filter( Q(title__icontains=title_contains_query) & Q(authors__icontains=author_contains_query) & Q(genres__icontains=category_contains_query)).distinct()
+    
+    # when two of four inputs fulfill out
+    # title and authors
+    elif is_valid_params(title_contains_query) and is_valid_params(author_contains_query):
+        searchedbook=bookitems.filter( Q(title__icontains=title_contains_query) | Q(authors__icontains=author_contains_query)).distinct()
+    # title and isbn
+    elif is_valid_params(title_contains_query) and is_valid_params(isbn_exact_query):
+        searchedbook=bookitems.filter( Q(title__icontains=title_contains_query) | Q(isbn=isbn_exact_query)).distinct()
+    # title and genres
+    elif is_valid_params(title_contains_query) and is_valid_params(category_contains_query):
+        searchedbook=bookitems.filter( Q(title__icontains=title_contains_query) | Q(genres__icontains=category_contains_query)).distinct()
+    # author and genres
+    elif is_valid_params(author_contains_query) and is_valid_params(category_contains_query):
+        searchedbook=bookitems.filter( Q(authors__icontains=author_contains_query) | Q(genres__icontains=category_contains_query)).distinct()
+    # author and isbn
+    elif is_valid_params(author_contains_query) and is_valid_params(isbn_exact_query):
+        searchedbook=bookitems.filter( Q(authors__icontains=author_contains_query) | Q(isbn=isbn_exact_query)).distinct()
+    # isbn and genres
+    elif is_valid_params(category_contains_query) and is_valid_params(isbn_exact_query):
+        searchedbook=bookitems.filter( Q(genres__icontains=category_contains_query) | Q(isbn=isbn_exact_query)).distinct()
+        
+    # when only one of four input fulfills out
+    elif is_valid_params(title_contains_query):
+        searchedbook=bookitems.filter(title__icontains=title_contains_query)
+    elif is_valid_params(author_contains_query):
+        searchedbook=bookitems.filter(authors__icontains=author_contains_query)
+    elif is_valid_params(isbn_exact_query):
+        searchedbook=bookitems.filter(isbn=isbn_exact_query)
+    elif is_valid_params(category_contains_query):
+        searchedbook=bookitems.filter(genres__icontains=category_contains_query)
+    context={
+        'searchedbook':searchedbook
+    }
+    return render(request, 'library/search-books.html', context)
+    
 # Connect to Database and get all objects from bookitems table
 def getAllBookitems():
     return Bookitems.objects.all()
+
+def searchUsers(request):
+    users=User.objects.filter(groups__name='member');
+    searchedUser=''
+    username_contains_query=request.GET.get('username_contains')
+    email_exact_query=request.GET.get('email_exact')
+    
+    if is_valid_params(username_contains_query) and is_valid_params(email_exact_query):
+        searchedUser=users.filter(Q(username__icontains=username_contains_query) & Q(email=email_exact_query))
+    elif is_valid_params(username_contains_query):
+        searchedUser=users.filter(Q(username__icontains=username_contains_query))
+    elif is_valid_params(email_exact_query):
+        searchedUser=users.filter(Q(email=email_exact_query))
+    context={
+        'searchedUser':searchedUser
+    }
+    return render(request, 'library/search-users.html', context)
 
 """
 Function name: loginpage 
@@ -136,36 +220,31 @@ Note: LibraryMember panel page needs modifications.
 #@login_required(login_url='/login/')
 #@allowed_user(allowed_roles=['LibraryMember'])
 def memberpanel(request):
-    bookitems=[{
-        'title': "Harry Potter and the Sorcerer's Stone",
-        'author': 'J. K. Rowling'
-    }, {
-        'title': "Harry Potter and Chamber of Secrets",
-        'author': 'J. K. Rowling'
-    }, {
-        'title': "Harry Potter and Prisoner of Azkaban",
-        'author': 'J. K. Rowling'
-    }, {
-        'title': "Harry Potter and Goblet of Fire",
-        'author': 'J. K. Rowling'
-    },
-    {
-        'title': "Harry Potter and Order of the Phoenix",
-        'author': 'J. K. Rowling'
-    },
-    {
-        'title': "Harry Potter and Half-Blood Prince",
-        'author': 'J. K. Rowling'
-    },{
-        'title': "Harry Potter and Deathly Hallows",
-        'author': 'J. K. Rowling'
-    }]
+    #Getting user info
     user=request.user
     member=LibraryMember.objects.get(user=request.user.id)
+    
+    #Getting books info 
+    rentedBook=Rented_books.objects.filter(Q(member_id=member.id) & Q(obs=True))
+    returnedBooks=Rented_books.objects.filter(Q(member_id=member.id) & Q(obs=False))
+    reservedBooks=Reserved_books.objects.filter(Q(member_id=member.id) & Q(obs=True))
+    
+    #Getting number of books
+    numOfRentedBooks=len(rentedBook)
+    numOfReturnedBooks=len(returnedBooks)
+    numOfReservedBooks=len(reservedBooks)
+    
+    #Getting feedbacks and reviews
     feedbacks=Feedbacks.objects.filter(member_id=member.id).filter(obs=True)
+    
     context={'user': user,
              'member':member,
-             'bookitems':bookitems,
+             'rentedBook':rentedBook,
+             'returnedBooks':returnedBooks,
+             'reservedBooks':reservedBooks,
+             'numOfRentedBooks':numOfRentedBooks,
+             'numOfReturnedBooks':numOfReturnedBooks,
+             'numOfReservedBooks':numOfReservedBooks,
              'feedbacks':feedbacks}
     return render(request, 'library/memberpanel.html', context)
 
@@ -187,25 +266,50 @@ UserUpdateForm and MemberUpdateForm. Members will be redirected to memberpanel p
 Note: editmemberinfo page Completed. 
 """
 def editmemberinfo(request):
-    user_form = UserUpdateForm()
-    if request.method=='POST':
-        user_form=UserUpdateForm(request.POST,instance=request.user)
-        member=LibraryMember.objects.get(user=request.user.id)
-        member_form=MemberUpdateForm(request.POST, instance=member)
-        if user_form.is_valid() and member_form.is_valid():
-            user_form.save()
-            member_form.save()
-            messages.success(request,'Your account information has been updated!')
-            return redirect('/memberpanel/')
-    else:
-        user_form=UserUpdateForm(instance=request.user)
-        member=LibraryMember.objects.get(user=request.user.id)
-        member_form=MemberUpdateForm(instance=member)
-    #print(member)
-    context={
-        'user_form':user_form,
-        'member_form':member_form
-    }
+    checkUser=User.objects.filter(id=request.user.id)
+    if checkUser[0].groups.all()[0].name=="member": 
+        user_form = UserUpdateForm()
+        if request.method=='POST':
+            user_form=UserUpdateForm(request.POST,instance=request.user)
+            member=LibraryMember.objects.get(user=request.user.id)
+            member_form=MemberUpdateForm(request.POST, instance=member)
+            if user_form.is_valid() and member_form.is_valid():
+                user_form.save()
+                member_form.save()
+                messages.success(request,'Your account information has been updated!')
+                return redirect('/memberpanel/')
+        else:
+            user_form=UserUpdateForm(instance=request.user)
+            member=LibraryMember.objects.get(user=request.user.id)
+            member_form=MemberUpdateForm(instance=member)
+        
+        context={
+            'user_form':user_form,
+            'member_form':member_form
+        }
+    elif checkUser[0].groups.all()[0].name=="librarian":
+        userid_query=request.GET.get('userid')
+        selectedUser=User.objects.get(id=userid_query)
+        user_form = UserUpdateForm()
+        if request.method=='POST':
+            user_form=UserUpdateForm(request.POST,instance=selectedUser)
+            member=LibraryMember.objects.get(user=userid_query)
+            member_form=MemberUpdateForm(request.POST, instance=member)
+            if user_form.is_valid() and member_form.is_valid():
+                user_form.save()
+                member_form.save()
+                message=str(selectedUser.username)+'-'+str(selectedUser.email)+' account information has been updated!'
+                messages.success(request,message)
+                return redirect('/searchusers/')
+        else:
+            user_form=UserUpdateForm(instance=selectedUser)
+            member=LibraryMember.objects.get(user=userid_query)
+            member_form=MemberUpdateForm(instance=member)
+        
+        context={
+            'user_form':user_form,
+            'member_form':member_form
+        }
     return render(request, 'library/editmemberinfo.html', context)
 
 def bookdetails(request, book_id):
@@ -347,18 +451,86 @@ def deleteNotification(request, notification_id):
     notification.save()
     return redirect(request.META.get('HTTP_REFERER'))
 
-def sendNotification(request):
-    NotificationForm
+"""
+Function name: sendNotification 
+Function description: rendering sendNotification page. Only librarian can access to this page and only when librarian login, they are able to access this page. This function will pass in
+the current librarian and selected member accounts info. The notification form will insert new notification data to the Notification table.   
+"""
+"""
+Notification Type: 
+1. Member reserved a book
+2. Member unserved a book
+3. Member can rent a book now
+4. Librarian to Member Notification  
+"""
+def sendNotification(request, user_id):
     form=NotificationForm()
+    from_Librarian=Librarian.objects.get(user=request.user)
+    to_member=LibraryMember.objects.get(user=user_id)
     if request.method == 'POST':
         form=NotificationForm(request.POST)
         if form.is_valid():
-            from_Librarian=Librarian.objects.get(user=request.user)
             notification=form.save(commit=False)
-            notification.from_Librarian_id=from_Librarian.id
+            notification.from_Librarian=from_Librarian
+            notification.to_member=to_member
             notification.notification_type=4
             notification.save()
-            return redirect(request.META.get('HTTP_REFERER')) 
-    context={'form':form}
+            message='Notication sent to '+str(to_member.user.username)+ ' successfully!'
+            messages.info(request, message)
+            return redirect('/searchusers/') 
+        #request.META.get('HTTP_REFERER') -- redirect to previous page
+    context={'form':form, 'librarian':from_Librarian, 'member':to_member}
     return render(request, "library/sendNotification.html", context)
+
+"""
+Function name: checkinPage 
+Function description: rendering check-in page. Only librarian can access to this page and only when librarian login, they are able to access this page. This function will pass in
+the selected user and member, and rented books.  
+"""
+#@login_required(login_url='/login/')
+#@librarian_only
+def checkinPage(request, user_id):
+    selectedUser=User.objects.get(id=user_id)
+    selectedMember=LibraryMember.objects.get(user=user_id)
+    rentedBooks=Rented_books.objects.filter(Q(member=selectedMember.id) & Q(obs=True))
+    nowdate=datetime.datetime.now().date()
+    for book in rentedBooks:
+        if nowdate>book.return_date:
+            print(book.book.title, '+', book.return_date, '+ Return Late' )
+            book.lateReturn=True
+            book.save()
+        else:
+            print(book.book.title, '+', book.return_date, '+ Good Status' )
+    #print(selectedUser)
+    
+    context={'selectedUser':selectedUser, 'selectedMember':selectedMember, 'rentedBooks':rentedBooks, 'nowdate':nowdate}
+    return render(request, "library/check-in.html", context)
+    
+"""
+Function name: checkoutPage 
+Function description: rendering check-out page. Only librarian can access to this page and only when librarian login, they are able to access this page. This function will pass in
+the selected user and member, and reserved books. 
+""" 
+#@login_required(login_url='/login/')
+#@librarian_only
+def checkoutPage(request, user_id):
+    selectedUser=User.objects.get(id=user_id)
+    selectedMember=LibraryMember.objects.get(user=user_id)
+    reservedBooks=Reserved_books.objects.filter(Q(member=selectedMember.id) & Q(obs=True))
+    nowdate=datetime.datetime.now().date()
+    for book in reservedBooks:
+        if nowdate>book.deadline:
+            print(book.book.title, '+ Dealine: ', book.deadline, '+ Reserve Period Over, Cannnot rent now' )
+            if book.canReserve==True:
+                book.canReserve=False
+        elif nowdate<book.deadline and nowdate>=book.available_rent_date:
+            print(book.book.title, '+ Dealine: ', book.deadline, '+ Available Rent Date', book.available_rent_date,'+ Ready to be rented' )
+            if book.canReserve==False:
+                book.canReserve=True
+            book.save()
+        elif nowdate<book.available_rent_date:
+            print(book.book.title, '+ Dealine: ', book.deadline, '+ book is not yet ready' )
+    
+    context={'selectedUser':selectedUser, 'selectedMember':selectedMember, 'reservedBooks':reservedBooks}
+    return render(request, "library/check-out.html", context)
 

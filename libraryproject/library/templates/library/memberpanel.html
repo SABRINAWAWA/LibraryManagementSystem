@@ -136,16 +136,26 @@
             margin-bottom: 1rem;
         }
 
-        .shelf .recommendation-container {
-            margin: 1rem 1rem;
-        }
-
         .recommendation-container {
             margin-left: 1rem;
+            margin-top: 1rem;
         }
 
         .shelf .card-header {
             text-align: center;
+        }
+
+        .reservedBookShelf {
+            margin-left: 1.5rem;
+        }
+
+        .image img {
+            width: 100px;
+            height: 130px;
+        }
+
+        .list-group-item span {
+            color: red;
         }
     </style>
 </head>
@@ -186,64 +196,110 @@
                     <div class="card rentedbook" style="width: 13rem;">
                         <div class="card-body">
                             <h5 class="card-title">Book Rented</h5>
-                            <p class="card-text">0</p>
+                            <p class="card-text">{{numOfRentedBooks}}</p>
                             <p class="card-link"><a href="#">Details</a></p>
                         </div>
                     </div>
                     <div class="card reservedbook" style="width: 13rem;">
                         <div class="card-body">
                             <h5 class="card-title">Book Reserved</h5>
-                            <p class="card-text">0</p>
+                            <p class="card-text">{{numOfReservedBooks}}</p>
                             <p class="card-link"><a href="#">Details</a></p>
                         </div>
                     </div>
                     <div class="card returnedbook" style="width: 13rem;">
                         <div class="card-body">
                             <h5 class="card-title">Book Returned</h5>
-                            <p class="card-text">0</p>
+                            <p class="card-text">{{numOfReturnedBooks}}</p>
                             <p class="card-link"><a href="#">Details</a></p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
         <section class="row2">
-            <div class="card shelf" style="width: 35rem;">
+            <div class="card rentedBookShelf" style="width: 38rem;">
                 <div class="card-header">
-                    Book Shelf
+                    <h3> Rented Books </h3>
                 </div>
+
                 <ul class="list-group list-group-flush">
-                    {% for bookitem in bookitems %}
+                    {% for book in rentedBook %}
                     <li class="list-group-item">
-                        <div class="bookitem">
-                            <h3>{{bookitem.title}}</h3>
-                            <p>{{bookitem.author}}</p>
-                            <a href="">View Details</a>
+                        <div class="bookitem card hstack gap-3">
+                            <div class="image hstack" style="width:60%;">
+                                <img src="{{book.book.img_url}}" class="card-img bookimage"
+                                    alt="{{book.book.title}}-image">
+
+                                <div class="card-body">
+                                    <h5 class="card-title">{{book.book.title}}</h5>
+                                    <p class="card-text">Authors: {{book.book.authors}}</p>
+                                    <p class="card-text">ISBN: {{book.book.isbn}}</p>
+                                </div>
+                            </div>
+                            <ul class="list-group list-group-flush" style="width:40%;">
+                                <li class="list-group-item">Rented on {{book.rented_date}}</li>
+                                <li class="list-group-item">Return before <span>{{book.return_date}}</span></li>
+                                <li class="list-group-item"><a href="/bookitems/{{book.book.id}}"
+                                        class="btn btn-outline-dark" target="_black">View Details</a></li>
+                                <li class="list-group-item">
+                                    {% if book.lateReturn %}
+                                    <p class="badge bg-danger">You should return this book now!</p>
+                                    {% endif %}
+                                </li>
+                            </ul>
                         </div>
                     </li>
                     {% endfor %}
                 </ul>
             </div>
 
-            <div class="recommendation-container" style="width: 24rem;">
-                <div class="card">
-                    <div class="card-header">
-                        Recommendation List
-                    </div>
-                    <div class="list-group">
-                        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">Book Title</h5>
-                                <small>Book Author</small>
-                            </div>
-                            <p class="mb-1">Description</p>
-                            <small>Genre</small>
-                        </a>
-                    </div>
+            <div class="card reservedBookShelf" style="width: 38rem;">
+                <div class="card-header">
+                    <h3> Reserved Books </h3>
                 </div>
+
+                <ul class="list-group list-group-flush">
+                    {% for book in reservedBooks %}
+                    <div class="bookitem card hstack gap-3">
+                        <div class="vstack">
+                            <div class="image hstack" style="width:55%;">
+                                <img src="{{book.book.img_url}}" class="card-img bookimage"
+                                    alt="{{book.book.title}}-image">
+
+                                <div class="card-body">
+                                    <h5 class="card-title">{{book.book.title}}</h5>
+                                    <p class="card-text">Authors: {{book.book.authors}}</p>
+                                    <p class="card-text">ISBN: {{book.book.isbn}}</p>
+                                </div>
+                            </div>
+                            <div class="viewdetail">
+                                <a href="/bookitems/{{book.book.id}}" type="button" class="btn btn-outline-dark"
+                                    target="_black">View Details</a>
+                            </div>
+                        </div>
+                        <ul class="list-group list-group-flush" style="width:45%;">
+                            <li class="list-group-item">Reserved on {{book.reserved_date}}</li>
+                            <li class="list-group-item">Available to rent after {{book.available_rent_date}}</li>
+                            <li class="list-group-item">Should rent before <span>{{book.deadline}}</span></li>
+                            <li class="list-group-item">
+                                {% if book.canReserve %}
+                                <p class="badge bg-success">Book is Ready to Rent</p>
+                                {% else %}
+                                <p class="badge bg-danger">Cannot Rent Now</p>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                    {% endfor %}
+                </ul>
             </div>
+
         </section>
+
         <section class="row3">
+            <!--
             <div class="feedback" style="width: 35rem;">
                 <div class="card">
                     <div class="card-header">
@@ -274,7 +330,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>-->
             <div class="feedback" style="width: 35rem;">
                 <div class="card">
                     <div class="card-header">
@@ -305,6 +361,24 @@
                         <div class="d-grid gap-2">
                             <a class="btn btn-outline-primary" type="button" href="/feedback/">View all feedbacks</a>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recommendation-container" style="width: 35rem;">
+                <div class="card">
+                    <div class="card-header">
+                        Recommendation List
+                    </div>
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">Book Title</h5>
+                                <small>Book Author</small>
+                            </div>
+                            <p class="mb-1">Description</p>
+                            <small>Genre</small>
+                        </a>
                     </div>
                 </div>
             </div>
