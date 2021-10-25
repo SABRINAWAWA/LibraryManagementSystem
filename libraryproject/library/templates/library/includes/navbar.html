@@ -99,24 +99,35 @@
                 </li>
                 {% endif %}
                 {% if user.is_authenticated %}
+                {% if request.user.groups.all.0.name == "member" %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">
                         {{request.user.username}}
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#">Rent Book</a></li>
-                        <li><a class="dropdown-item" href="#">Return Book</a></li>
+                        <li><a class="dropdown-item" href="#">Rented Book</a></li>
+                        <li><a class="dropdown-item" href="#">Reserved Book</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
                         <li><a class="dropdown-item" href="#">User Info</a></li>
                     </ul>
                 </li>
-
-                {% if request.user.groups.all.0.name == "member" %}
+                
                 <li class="nav-item">
                     {% show_notifications %}
+                </li>
+                {%else%}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        {{request.user.username}}
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="/searchusers/">Toolbox</a></li>
+                        <li><a class="dropdown-item" href="/holdaccount/">User Account</a></li>
+                    </ul>
                 </li>
                 {% endif %}
                 {% endif %}

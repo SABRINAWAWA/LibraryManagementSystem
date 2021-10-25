@@ -14,7 +14,7 @@
 6. Library member panel almost completed.
 
 ## Phase 3
-1. Notification feature added
+1. Notification feature added (modification need)
 
 Corinne: Testing views.py
 1. home
