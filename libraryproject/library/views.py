@@ -11,7 +11,7 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 
 from .models import Bookitems, LibraryMember, Feedbacks, Librarian, Notification, Reserved_books, Rented_books
-from .filters import BookitemsFilter
+from .filters import BookitemsFilter, UserFilter
 from .forms import CreateUserForm, UserUpdateForm, MemberUpdateForm, BookitemForm, FeedbackForm, LibarianUpdateForm, NotificationForm
 from .decorators import unauthenticated_user, allowed_user, librarian_only
 
@@ -534,3 +534,46 @@ def checkoutPage(request, user_id):
     context={'selectedUser':selectedUser, 'selectedMember':selectedMember, 'reservedBooks':reservedBooks}
     return render(request, "library/check-out.html", context)
 
+"""
+Function name: hold
+Function description: rendering hold-account page
+Note: Using usFilter class in filters.py to generate the filter result. 
+"""   
+def pickUser(request):
+    searchedmember = []
+    member = getAllMember() 
+    usFilter = UserFilter(request.GET, queryset=member)
+    if usFilter.is_valid():
+        searchedmember = usFilter.qs
+
+    return render(request, 'library/hold-account.html', {
+        'searchedmember': searchedmember,
+        'usFilter': usFilter,
+        'member': member,
+    })
+
+# Connect to Database and get all non-staff users from auth-user table
+def getAllMember():
+    return User.objects.select_related('librarymember').all().filter(is_staff=False)
+
+"""
+Function name: holdAccount
+Function description: hold member account by changing the hold to True
+"""   
+def holdAccount(request, user_id):
+    selectedUser=User.objects.get(id=user_id)
+    member=LibraryMember.objects.get(user=selectedUser)
+    member.hold=True
+    member.save()
+    return redirect('/holdaccount/')
+
+"""
+Function name: releaseAccount
+Function description: release member account by changing the hold to False
+"""   
+def releaseAccount(request, user_id):
+    selectedUser=User.objects.get(id=user_id)
+    member=LibraryMember.objects.get(user=selectedUser)
+    member.hold=False
+    member.save()
+    return redirect('/holdaccount/')

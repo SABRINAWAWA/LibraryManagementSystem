@@ -10,3 +10,10 @@ class BookitemsFilter(django_filters.FilterSet):
     class Meta:
         model= Bookitems
         fields=['title', 'authors', 'isbn']
+        
+class UserFilter(django_filters.FilterSet):
+    email=CharFilter(field_name='email',lookup_expr='icontains')
+    username=CharFilter(field_name='username',lookup_expr='icontains')
+    class Meta:
+        model= User
+        fields=['id','email','username']

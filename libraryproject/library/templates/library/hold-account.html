@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Search Catalog allows users to search books they want to rent.">
+    <title>Library-Hold\Release Account</title>
+    <link rel="stylesheet" href="{% static 'library/styles/search-catalog.css' %}">
+    <link rel="stylesheet" href="{% static 'library/styles/footer.css' %}">
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"
+        integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js"
+        integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/"
+        crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+    {% include 'library/includes/navbar.html' %}
+
+    <div class="body_container">
+        <section class="header">
+            <h1>Hold\Release Account</h1>
+        </section>
+
+        <div class="container">
+
+            <section class="search_input">
+                <h3>Hold\Release Acount: </h3>
+                <form action="" method="get" id="search_form">
+                    <tr><th><label for="id_id">ID:</label></th><td><input type="number" name="id" min=0 step="any" id="id_id"></td></tr>
+                    <tr><th><label for="id_email">Email address contains:</label></th><td><input type="text" name="email" id="id_email"></td></tr>
+                    <tr><th><label for="id_username">Username contains:</label></th><td><input type="text" name="username" id="id_username"></td></tr>
+                    <button type="submit">Search</button>
+                    <button type="clear">Clear</button>
+                </form>
+            </section>
+            <section class="search_output">
+                {% for user in searchedmember %}
+                <div class="card bookitem" style="width: 18rem;">
+
+                    <div class="card-body">
+                        <h5 class="card-title">User ID: {{user.id}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">e-mail: {{user.email}}</h6>
+                        <p class="card-text">Username: {{user.username}}</p> 
+
+                        <p class="card-text">Account Status: {{user.librarymember.hold|yesno:"Deactivated,Active"}}</p> 
+                        {% if user.librarymember.hold %}
+                        <a href="/holdaccount/release/{{user.id}}" class="btn btn-primary">Release</a>
+                        {% else %}
+                        <a href="/holdaccount/hold/{{user.id}}" class="btn btn-primary">Hold</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}  
+            </section>
+        </div>
+    </div>
+
+    {% include 'library/includes/footer.html' %}
+
+</body>
+
+</html> 

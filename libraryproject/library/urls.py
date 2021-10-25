@@ -46,6 +46,12 @@ urlpatterns = [
     #check-in/ check-out feature
     path('check_in/<int:user_id>', views.checkinPage),
     path('check_out/<int:user_id>', views.checkoutPage),
+    
+    
+    #hold/release account feature
+    path('holdaccount/', views.pickUser),
+    path('holdaccount/hold/<int:user_id>', views.holdAccount),
+    path('holdaccount/release/<int:user_id>', views.releaseAccount),
 ]
 
 '''
