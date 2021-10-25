@@ -9,6 +9,12 @@
 1. Library User reset password by email page Completed
 2. Library notification feature partial completed, need to add notification when users reserve/unreserve a book. 
 3. Create new librarian and update librarian info feature added.
+4. Library Check-in/Check-out page completed.
+5. Search books, users feature completed.
+6. Library member panel almost completed.
+
+## Phase 3
+1. Notification feature added
 
 Corinne: Testing views.py
 1. home
