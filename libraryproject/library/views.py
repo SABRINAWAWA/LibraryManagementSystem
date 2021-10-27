@@ -15,7 +15,7 @@ from .filters import BookitemsFilter, UserFilter
 from .forms import CreateUserForm, UserUpdateForm, MemberUpdateForm, BookitemForm, FeedbackForm, LibarianUpdateForm, NotificationForm
 from .decorators import unauthenticated_user, allowed_user, librarian_only
 
-"""
+"""[summary]
 Function name: home
 Function description: rendering homepage
 Note: Futher modification needs to import the bookitems from bookitems table and add librarian info
@@ -54,8 +54,7 @@ def home(request):
         'news': news
     })
 
-
-"""
+"""[summary]
 Function name: search 
 Function description: rendering search catalog page
 Note: Using BookitemsFilter class in filters.py to generate the filter result. 
@@ -72,9 +71,17 @@ def search(request):
         'searchedbook': searchedbook
     })
     
+"""[summary]
+Function name: is_valid_params
+Function description: check if input variable is null or empty string. Return true if input variable is not null and is not empty string, otherwise, return false.
+"""
 def is_valid_params(param):
     return param !='' and param is not None
 
+"""[summary]
+Function name: searchbooks
+Function description: search all bookitems in the database depending on the title, author, isbn, and category. 
+"""
 def searchBooks(request):
     # Get all bookitems from bookitems table
     bookitems = getAllBookitems()
@@ -141,6 +148,10 @@ def searchBooks(request):
 def getAllBookitems():
     return Bookitems.objects.all()
 
+"""[summary]
+Function name: searchUsers
+Function description: search all users in the database depending on the username and email. 
+"""
 def searchUsers(request):
     users=User.objects.filter(groups__name='member');
     searchedUser=''
@@ -158,7 +169,7 @@ def searchUsers(request):
     }
     return render(request, 'library/search-users.html', context)
 
-"""
+"""[summary]
 Function name: loginpage 
 Function description: rendering user login page. When users submit the login form, it will search the matched username and password in the User table. After finding matched user, users will be redirected to home page.
 Otherwise, users will receive message "Username/Password is incorrect". 
@@ -178,7 +189,8 @@ def loginpage(request):
 
     context = {}
     return render(request, 'library/login.html', context)
-"""
+
+"""[summary]
 Function name: registerpage 
 Function description: rendering user register page. When users submit the register form, it will create new user in the user table and LibraryMember table.
 LibraryMembers will be directed to login page.
@@ -204,7 +216,7 @@ def registerpage(request):
     context = {'form': form}
     return render(request, 'library/register.html', context)
 
-"""
+"""[summary]
 Function name: logoutuser 
 Function description: logout users and redirect to login page after logout
 """
@@ -212,12 +224,12 @@ def logoutuser(request):
     logout(request)
     return redirect('/login/')
 
-"""
+"""[summary]
 Function name: LibraryMemberpanel 
 Function description: rendering LibraryMemberpanel page. Only LibraryMembers can access to LibraryMemberpanel page and only when LibraryMembers login, they are able to access this page.
 Note: LibraryMember panel page needs modifications. 
 """
-#@login_required(login_url='/login/')
+@login_required(login_url='/login/')
 #@allowed_user(allowed_roles=['LibraryMember'])
 def memberpanel(request):
     #Getting user info
@@ -248,23 +260,24 @@ def memberpanel(request):
              'feedbacks':feedbacks}
     return render(request, 'library/memberpanel.html', context)
 
-"""
+"""[summary]
 Function name: librarianpanel 
 Function description: rendering librarianpanel page. Only librarian can access to librarianpanel page and only when librarian login, they are able to access this page.
 Note: Librarian panel page needs modifications. 
 """
-#@login_required(login_url='/login/')
+@login_required(login_url='/login/')
 #@librarian_only
 def librarianpanel(request):
-    context={}
+    feedback=Feedbacks.objects.all();
+    context={'feedback':feedback}
     return render(request, 'library/librarianpanel.html', context)
 
-"""
+"""[summary]
 Function name: editmemberinfo 
 Function description: rendering user editLibraryMemberinfo page. When users submit the update_user_info form, it will update user info user table and LibraryMember table by using 
 UserUpdateForm and MemberUpdateForm. Members will be redirected to memberpanel page after they updated their info.
-Note: editmemberinfo page Completed. 
 """
+@login_required(login_url='/login/')
 def editmemberinfo(request):
     checkUser=User.objects.filter(id=request.user.id)
     if checkUser[0].groups.all()[0].name=="member": 
@@ -312,6 +325,10 @@ def editmemberinfo(request):
         }
     return render(request, 'library/editmemberinfo.html', context)
 
+"""[summary]
+Function name: bookdetails 
+Function description: rendering bookdetails page, passing in all bookdetails stored in the bookitems table in the database.
+"""
 def bookdetails(request, book_id):
     bookitem=Bookitems.objects.get(id=book_id)
     context={
@@ -319,6 +336,12 @@ def bookdetails(request, book_id):
     }
     return render(request,"library/bookdetails.html", context)
 
+"""[summary]
+Function name: editBookDetails 
+Function description: rendering editbookdetails form, saving any changes of the bookitems, rendering page to bookdetail page after saving.
+"""
+@login_required(login_url='/login/')
+#@librarian_only
 def editBookDetails(request, book_id):
     bookitem=Bookitems.objects.get(id=book_id)
     if request.method=='POST':
@@ -336,6 +359,12 @@ def editBookDetails(request, book_id):
     }
     return render(request,"library/editbookdetails.html", context)
 
+"""[summary]
+Function name: addBook 
+Function description: rendering addbook form, saving new bookitem to the bookitems table, rendering page to bookdetail page after saving.
+"""
+@login_required(login_url='/login/')
+#@librarian_only
 def addBook(request):
     book_form = BookitemForm()
     if request.method == 'POST':
@@ -349,12 +378,23 @@ def addBook(request):
     context = {'form': book_form}
     return render(request, "library/addbook.html", context)
 
+"""[summary]
+Function name: deleteBook 
+Function description: delete bookitems from the bookitems table.
+"""
+@login_required(login_url='/login/')
+#@librarian_only
 def deleteBook(request, book_id):
     bookitem=Bookitems.objects.get(id=book_id)
     bookitem.delete()
     messages.success(request, bookitem.title+' was deleted.')
     return redirect('/memberpanel/')
 
+"""[summary]
+Function name: createFeedback 
+Function description:  rendering createFeedback form, saving new feedback to the feedbacks table, rendering page to memberpanel page after saving.
+"""
+@login_required(login_url='/login/')
 def createFeedback(request):
     form=FeedbackForm()
     if request.method == 'POST':
@@ -368,6 +408,11 @@ def createFeedback(request):
     context={'form':form}
     return render(request, 'library/createFeedback.html', context)
 
+"""[summary]
+Function name: updateFeedback 
+Function description:  rendering updateFeedback form, updating exist feedback in the feedbacks table, rendering page to memberpanel page after saving changes.
+"""
+@login_required(login_url='/login/')
 def updateFeedback(request, feedback_id):
     feedback=Feedbacks.objects.get(id=feedback_id)
     if request.method=='POST':
@@ -385,6 +430,11 @@ def updateFeedback(request, feedback_id):
     }
     return render(request,"library/updatefeedback.html", context)
 
+"""[summary]
+Function name: deleteFeedback 
+Function description: delete feedback from the feedbacks table.
+"""
+@login_required(login_url='/login/')
 def deleteFeedback(request, feedback_id):
     feedback=Feedbacks.objects.get(id=feedback_id)
     feedback.obs=False
@@ -392,6 +442,13 @@ def deleteFeedback(request, feedback_id):
     messages.success(request, "'"+feedback.feedback_title+"'"+' was deleted.')
     return redirect('/memberpanel/')
 
+"""[summary]
+Function name: registerLibrarian 
+Function description: rendering librarian register page. When librarian submits the registerlibrarian form, it will create new librarian in the librarian and user tables.
+librarian will be directed to login page.
+"""
+@login_required(login_url='/login/')
+#@librarian_only
 def registerLibrarian(request):
     form = CreateUserForm()
     if request.method == 'POST':
@@ -411,6 +468,13 @@ def registerLibrarian(request):
     context = {'form': form}
     return render(request, 'library/registerLibrarian.html', context)
 
+"""[summary]
+Function name: editLibrarianInfo 
+Function description: rendering user editLibraryinfo page. When users submit the update_librarian_info form, it will update user info user table and librarian table by using 
+UserUpdateForm and LibarianUpdateForm. Librarian will be redirected to librarian panel page after they updated their info.
+"""
+@login_required(login_url='/login/')
+#@librarian_only
 def editLibrarianInfo(request):
     user_form = UserUpdateForm()
     if request.method=='POST':
@@ -421,7 +485,7 @@ def editLibrarianInfo(request):
             user_form.save()
             librarian_form.save()
             messages.success(request,'Your account information has been updated!')
-            return redirect('/librarypanel/')
+            return redirect('/librarianpanel/')
     else:
         user_form=UserUpdateForm(instance=request.user)
         librarian=Librarian.objects.get(user=request.user.id)
@@ -433,6 +497,11 @@ def editLibrarianInfo(request):
     }
     return render(request, 'library/editLibrarianInfo.html', context)
     
+"""[summary]
+Function name: checkNotification 
+Function description: rendering user's viewNotification page, displaying notification information and change the user_has_seen property to True.
+"""
+@login_required(login_url='/login/')
 def checkNotification(request, notification_id):
     # Get notification item from table notification by notification primary key -- id
     notification=Notification.objects.get(id=notification_id)
@@ -445,13 +514,18 @@ def checkNotification(request, notification_id):
     }
     return render(request,"library/viewNotification.html", context)
 
+"""[summary]
+Function name: deleteNotification 
+Function description: delete notification by finding the notification and change the user_has_seen to True.
+"""
+@login_required(login_url='/login/')
 def deleteNotification(request, notification_id):
     notification=Notification.objects.get(pk=notification_id)
     notification.user_has_seen=True
     notification.save()
     return redirect(request.META.get('HTTP_REFERER'))
 
-"""
+"""[Summary]
 Function name: sendNotification 
 Function description: rendering sendNotification page. Only librarian can access to this page and only when librarian login, they are able to access this page. This function will pass in
 the current librarian and selected member accounts info. The notification form will insert new notification data to the Notification table.   
@@ -463,6 +537,8 @@ Notification Type:
 3. Member can rent a book now
 4. Librarian to Member Notification  
 """
+@login_required(login_url='/login/')
+#@librarian_only
 def sendNotification(request, user_id):
     form=NotificationForm()
     from_Librarian=Librarian.objects.get(user=request.user)
@@ -482,12 +558,12 @@ def sendNotification(request, user_id):
     context={'form':form, 'librarian':from_Librarian, 'member':to_member}
     return render(request, "library/sendNotification.html", context)
 
-"""
+"""[Summary]
 Function name: checkinPage 
 Function description: rendering check-in page. Only librarian can access to this page and only when librarian login, they are able to access this page. This function will pass in
 the selected user and member, and rented books.  
 """
-#@login_required(login_url='/login/')
+@login_required(login_url='/login/')
 #@librarian_only
 def checkinPage(request, user_id):
     selectedUser=User.objects.get(id=user_id)
@@ -506,12 +582,12 @@ def checkinPage(request, user_id):
     context={'selectedUser':selectedUser, 'selectedMember':selectedMember, 'rentedBooks':rentedBooks, 'nowdate':nowdate}
     return render(request, "library/check-in.html", context)
     
-"""
+"""[Summary]
 Function name: checkoutPage 
 Function description: rendering check-out page. Only librarian can access to this page and only when librarian login, they are able to access this page. This function will pass in
 the selected user and member, and reserved books. 
 """ 
-#@login_required(login_url='/login/')
+@login_required(login_url='/login/')
 #@librarian_only
 def checkoutPage(request, user_id):
     selectedUser=User.objects.get(id=user_id)
@@ -534,11 +610,13 @@ def checkoutPage(request, user_id):
     context={'selectedUser':selectedUser, 'selectedMember':selectedMember, 'reservedBooks':reservedBooks}
     return render(request, "library/check-out.html", context)
 
-"""
+"""[Summary]
 Function name: hold
 Function description: rendering hold-account page
 Note: Using usFilter class in filters.py to generate the filter result. 
-"""   
+"""  
+@login_required(login_url='/login/')
+#@librarian_only 
 def pickUser(request):
     searchedmember = []
     member = getAllMember() 
@@ -556,10 +634,12 @@ def pickUser(request):
 def getAllMember():
     return User.objects.select_related('librarymember').all().filter(is_staff=False)
 
-"""
+"""[Summary]
 Function name: holdAccount
 Function description: hold member account by changing the hold to True
 """   
+@login_required(login_url='/login/')
+#@librarian_only
 def holdAccount(request, user_id):
     selectedUser=User.objects.get(id=user_id)
     member=LibraryMember.objects.get(user=selectedUser)
@@ -567,10 +647,12 @@ def holdAccount(request, user_id):
     member.save()
     return redirect('/holdaccount/')
 
-"""
+"""[Summary]
 Function name: releaseAccount
 Function description: release member account by changing the hold to False
 """   
+@login_required(login_url='/login/')
+#@librarian_only
 def releaseAccount(request, user_id):
     selectedUser=User.objects.get(id=user_id)
     member=LibraryMember.objects.get(user=selectedUser)
