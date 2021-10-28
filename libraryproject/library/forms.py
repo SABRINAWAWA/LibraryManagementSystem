@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.contrib.auth.models import User
 from .models import Feedbacks, LibraryMember, Bookitems, Librarian, Notification
+from django.forms import Textarea
 
 class CreateUserForm(UserCreationForm):
     last_name=forms.CharField(max_length=100)
@@ -36,12 +37,12 @@ class BookitemForm(forms.ModelForm):
     average_rating=forms.CharField(max_length=200)
     isbn=forms.CharField(max_length=50)
     format=forms.CharField(max_length=100)
-    description=forms.CharField(max_length=10000)
+    description=forms.CharField(max_length=10000, widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}))
     edition=forms.CharField(max_length=100)
     genres=forms.CharField(max_length=100)
     img_url=forms.CharField(max_length=1000)
-    stock_quantity=forms.IntegerField()
-    available_quantity=forms.IntegerField()
+    stock_quantity=forms.IntegerField(min_value=0)
+    available_quantity=forms.IntegerField(min_value=0)
     class Meta:
         model=Bookitems
         fields = ('title', 'authors', 'average_rating', 'isbn', 'format', 
