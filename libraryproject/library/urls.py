@@ -52,6 +52,7 @@ urlpatterns = [
     path('holdaccount/', views.pickUser),
     path('holdaccount/hold/<int:user_id>', views.holdAccount),
     path('holdaccount/release/<int:user_id>', views.releaseAccount),
+
 ]
 
 '''

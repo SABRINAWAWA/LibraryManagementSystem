@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Details</title>
+    <link rel="shortcut icon" href="{% static 'library/images/icon.png' %}"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
     <script type="text/javascript" src="{% static 'library/javascript/library.js' %}"></script>
@@ -18,7 +19,29 @@
         crossorigin="anonymous"></script>
     <style>
         .container {
-            margin-top: 6rem;
+            margin-top: 4rem;
+            margin-bottom: 4rem;
+        }
+        td {
+            padding: 0px 35px 0px 0px;
+        }
+        .div {
+            max-height: 200px; 
+            overflow: auto; 
+        }
+        .btn {
+             background-color: #4c9ed9;
+             color: #ffffff;
+             padding: 5px 10px;
+             border: 1px solid #111;
+             }
+        .btn:hover {
+             background-color: #ffffff;
+             color: #4c9ed9;
+             border: 1px solid #111;
+        }
+        .footer_container {
+            height: 50px;
         }
     </style>
 </head>
@@ -26,25 +49,55 @@
 <body>
     {% include 'library/includes/navbar.html' %}
     <div class="container">
-        <h2>{{book.title}}</h2>
-        <img src="{{book.img_url}}" alt="{{book.title}}-image">
+        <table>
+            <tr>
+                <td rowspan="2">
+        
+        <img src="{{book.img_url}}" alt="{{book.title}}-image"></td>
+        <td>
+            <h2>{{book.title}}</h2>
         <p>Authors: {{book.authors}}</p>
         <p>Average Rating: {{book.average_rating}}</p>
-        <p>ISBN: {{book.isbn}}</p>
-        <p>Description: {{book.description}}</p>
+        <p>ISBN: {{book.isbn}}</p>    
         {% if book.edition|length > 0 %}
         <p>Edition: {{book.edition}}</p>
         {% else %}
         <p>Edition: General Edition</p>
         {% endif %}
+        {% if book.genres|length > 0 %}
         <p>Genres: {{book.genres}}</p>
+        {% else %}
+        <p>Genres: Not Available</p>
+        {% endif %}
+    </td>
+    
+</tr>
+    <tr>
+    
+    <td><div class="div">
+        {% if book.description|length > 0 %}
+        <p>Description: {{book.description}}</p>
+        {% else %}
+        <p>Descripion: Not Available</p>
+        {% endif %}</div></td>
+</tr>
+     <tr>
+        <td>
         {% if book.available_quantity >= 0 %}
         <h3>Available for renting</h3>
-        <button>Add to Shelf</button>
-        {% else %}
+            <button class="btn">Add to Shelf</button>
+            {% else %}    
         <h3>Unavailable for renting</h3>
+        <h3>We will contact you when it becomes available</h3>
         {% endif %}
+    </td>
+    <td><h3>Changed your mind?</h3>
+        <a href='/searchbooks/'><button class="btn">Pick Another Book</button></a>
+    </td>
+    </tr>
+    </table>
     </div>
+    {% include 'library/includes/footer-mini.html' %}
 </body>
 
 </html>
