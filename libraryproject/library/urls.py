@@ -9,6 +9,7 @@ urlpatterns = [
     
     # Library member-related links
     path('login/', views.loginpage),
+    path('warning/', views.warning),
     path('logout/', views.logoutuser),
     path('register/', views.registerpage),
     path('editmemberinfo/', views.editmemberinfo),
@@ -46,7 +47,10 @@ urlpatterns = [
     #check-in/ check-out feature
     path('check_in/<int:user_id>', views.checkinPage),
     path('check_out/<int:user_id>', views.checkoutPage),
-    
+    path('check_out_book/<int:user_id>/<int:book_id>', views.checkout),
+    path('check_in_book/<int:user_id>/<int:book_id>', views.checkin),
+    path('reserve_book/<int:book_id>', views.reserveBook),
+    path('unreserve_book/<int:book_id>', views.unreserveBook),
     
     #hold/release account feature
     path('holdaccount/', views.pickUser),

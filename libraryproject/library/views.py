@@ -173,7 +173,6 @@ def searchUsers(request):
 Function name: loginpage 
 Function description: rendering user login page. When users submit the login form, it will search the matched username and password in the User table. After finding matched user, users will be redirected to home page.
 Otherwise, users will receive message "Username/Password is incorrect". 
-Note: Login Page Completed.
 """
 @unauthenticated_user
 def loginpage(request):
@@ -182,8 +181,16 @@ def loginpage(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            login(request, user)
-            return redirect('/home/')
+            if user.groups.all()[0].name=="member":
+                member=LibraryMember.objects.get(user=user);
+                if member.hold==True:
+                    return redirect('/warning/')
+                else:
+                    login(request, user)
+                    return redirect('/home/')
+            else:
+                login(request, user)
+                return redirect('/home/')
         else:
             messages.info(request, 'Username/Password is incorrect.')
 
@@ -191,10 +198,16 @@ def loginpage(request):
     return render(request, 'library/login.html', context)
 
 """[summary]
+Function name: warning 
+Function description: rendering warning page. 
+"""
+def warning(request):
+    return render(request, 'library/warning.html')
+
+"""[summary]
 Function name: registerpage 
 Function description: rendering user register page. When users submit the register form, it will create new user in the user table and LibraryMember table.
 LibraryMembers will be directed to login page.
-Note: Register page needs modifications. 
 """
 @unauthenticated_user
 def registerpage(request):
@@ -572,11 +585,12 @@ def checkinPage(request, user_id):
     nowdate=datetime.datetime.now().date()
     for book in rentedBooks:
         if nowdate>book.return_date:
-            print(book.book.title, '+', book.return_date, '+ Return Late' )
+            #print(book.book.title, '+', book.return_date, '+ Return Late' )
             book.lateReturn=True
             book.save()
         else:
-            print(book.book.title, '+', book.return_date, '+ Good Status' )
+            pass
+            #print(book.book.title, '+', book.return_date, '+ Good Status' )
     #print(selectedUser)
     
     context={'selectedUser':selectedUser, 'selectedMember':selectedMember, 'rentedBooks':rentedBooks, 'nowdate':nowdate}
@@ -596,16 +610,17 @@ def checkoutPage(request, user_id):
     nowdate=datetime.datetime.now().date()
     for book in reservedBooks:
         if nowdate>book.deadline:
-            print(book.book.title, '+ Dealine: ', book.deadline, '+ Reserve Period Over, Cannnot rent now' )
+            #print(book.book.title, '+ Dealine: ', book.deadline, '+ Reserve Period Over, Cannnot rent now' )
             if book.canReserve==True:
                 book.canReserve=False
         elif nowdate<book.deadline and nowdate>=book.available_rent_date:
-            print(book.book.title, '+ Dealine: ', book.deadline, '+ Available Rent Date', book.available_rent_date,'+ Ready to be rented' )
+            #print(book.book.title, '+ Dealine: ', book.deadline, '+ Available Rent Date', book.available_rent_date,'+ Ready to be rented' )
             if book.canReserve==False:
                 book.canReserve=True
             book.save()
         elif nowdate<book.available_rent_date:
-            print(book.book.title, '+ Dealine: ', book.deadline, '+ book is not yet ready' )
+            pass
+            #print(book.book.title, '+ Dealine: ', book.deadline, '+ book is not yet ready' )
     
     context={'selectedUser':selectedUser, 'selectedMember':selectedMember, 'reservedBooks':reservedBooks}
     return render(request, "library/check-out.html", context)
@@ -659,3 +674,134 @@ def releaseAccount(request, user_id):
     member.hold=False
     member.save()
     return redirect('/holdaccount/')
+
+"""[Summary]
+Function name: checkin
+Function description: checkin function find the corresponging rented book in the rented_book table to unobservable, add 1 back to the available quantity of the book in the bookitems table.
+check if the user returns the book late.
+"""   
+@login_required(login_url='/login/')
+#@librarian_only
+def checkin(request, user_id, book_id):
+    # Find corresponding uesr, member and book
+    user=User.objects.get(id=user_id)
+    book=Bookitems.objects.get(id=book_id)
+    member=LibraryMember.objects.get(user=user)
+    # Define current date
+    nowdate=datetime.datetime.now().date()
+    # Find the rented book record and change it to unobservable
+    rentdBookRecords=Rented_books.objects.filter(Q(member=member) & Q(book=book) & Q(obs=True))
+    rentdBookRecord=rentdBookRecords[0];
+    rentdBookRecord.obs=False
+    # When returning book, add 1 to the available_quantity of that book
+    book.available_quantity+=1
+    book.save()
+    # Determine if the return is late or not.
+    if (nowdate>rentdBookRecord.return_date):
+        rentdBookRecord.lateReturn=True
+    else:
+        rentdBookRecord.lateReturn=False
+    rentdBookRecord.save()
+    return redirect('/check_in/'+str(user_id))
+
+"""[Summary]
+Function name: checkout
+Function description: checkout function calculate the rent date and return date for member, and create new rented_book object and save it in the rented_book table. 
+Then change the corresponging reserved book in the reserved_book table to unobservable. 
+"""   
+@login_required(login_url='/login/')
+#@librarian_only
+def checkout(request, user_id, book_id):
+    # Find corresponding uesr, member and book
+    user=User.objects.get(id=user_id)
+    book=Bookitems.objects.get(id=book_id)
+    member=LibraryMember.objects.get(user=user)
+    # Define current date
+    nowdate=datetime.datetime.now().date()
+    # Define return date which is 21 days away from the current date
+    returndate=nowdate+datetime.timedelta(days=21)
+    # Create a new rented book table record
+    rentedBookRecord=Rented_books(book=book, title=book.title, member=member, rented_date=nowdate, return_date=returndate)
+    rentedBookRecord.save()
+    # Find the corresponding reserved Book Record
+    reservedBookRecords=Reserved_books.objects.filter(Q(member=member) & Q(book=book) & Q(obs=True))
+    reservedBookRecord=reservedBookRecords[0];
+    reservedBookRecord.obs=False
+    reservedBookRecord.save()
+    rentSussess=book.title+" is rented successfully."
+    messages.success(request, rentSussess)
+    return redirect('/check_out/'+str(user_id))
+
+"""[Summary]
+Function name: reserveBook
+Function description: reserveBook function check if the user already rent 10 books, if so, it won't allow the user to reserve book. If not, then it will create new reserve book record and save it 
+in the reserveBook table, decrease the book's available quantity by 1.
+"""   
+@login_required(login_url='/login/')
+def reserveBook(request, book_id):
+    # Find corresponding uesr, member and book
+    user=request.user
+    member=LibraryMember.objects.get(user=user)
+    selectedBook=Bookitems.objects.get(id=book_id)
+    reservedBookRecordList=Reserved_books.objects.filter(Q(member=member) & Q(obs=True))
+    #print(reservedBookRecordList)
+    if (len(reservedBookRecordList)<10):
+        # if there are books available to be rented then allow users to reserve the book
+        if (selectedBook.available_quantity>0):
+            # Define current date
+            nowdate=datetime.datetime.now().date()
+            # Define the deadline to rent this book
+            deadline=nowdate+datetime.timedelta(days=10)
+            # create records in reserved book table
+            reservedBookRecord=Reserved_books(book=selectedBook, title=selectedBook.title, member=member,reserved_date=nowdate, deadline=deadline, available_rent_date=nowdate, canReserve=True)
+            reservedBookRecord.save()
+            # reserve book for users, decrease book's available quantity by 1
+            selectedBook.available_quantity=selectedBook.available_quantity-1
+            selectedBook.save()
+            reserveSussess=selectedBook.title+" is reserved successfully."
+            messages.info(request, reserveSussess)
+        elif (selectedBook.available_quantity==0):
+            # Define current date
+            nowdate=datetime.datetime.now().date()
+            # Search for rented book records
+            rentedBookRecords=Rented_books.objects.filter(Q(book=selectedBook) & Q(obs=True))
+            # Find the book that has the closest return_date
+            rentedBookRecord=rentedBookRecords[0]
+            for i in range(len(rentedBookRecords)):
+                if (rentedBookRecords[i].return_date<rentedBookRecord.return_date):
+                    rentedBookRecord=rentedBookRecords[i]
+            #print(rentedBookRecord)
+            # Set the deadline for the reserved book 
+            deadline=rentedBookRecord.rented_date+datetime.timedelta(days=10)
+            # Create records in reserved book table
+            reservedBookRecord=Reserved_books(book=selectedBook, title=selectedBook.title, member=member,reserved_date=nowdate, deadline=deadline, available_rent_date=rentedBookRecord.return_date, canReserve=False)
+            reservedBookRecord.save()
+            reserveSussess=reservedBookRecord.book.title+" is reserved successfully."
+            messages.info(request, reserveSussess)
+    else:
+        errorSent="Dear member, you already reserved 10 books. Please rent some books you reserved before reserving more books!"
+        messages.info(request, errorSent)
+    return redirect('/searchbooks/')
+
+"""[Summary]
+Function name: unreserveBook
+Function description: unreservebook function finds the corresponding record in the reserved book table and then if canReserve is true, then it will add 1 back to the available quantity of that book 
+and change the record of reserved book record to unobservable and save the change.
+"""   
+@login_required(login_url='/login/')
+def unreserveBook(request, book_id):
+    user=request.user
+    member=LibraryMember.objects.get(user=user)
+    selectedBook=Bookitems.objects.get(id=book_id)
+    reservedBookRecords=Reserved_books.objects.filter(Q(member=member) & Q(book=selectedBook) & Q(obs=True))
+    reservedBookRecord=reservedBookRecords[0]
+    if (reservedBookRecord.canReserve==True):
+        selectedBook.available_quantity+=1
+        selectedBook.save()
+        reservedBookRecord.obs=False
+        reservedBookRecord.save()
+    else:
+        reservedBookRecord.obs=False
+        reservedBookRecord.save()
+    return redirect('/memberpanel/')
+    

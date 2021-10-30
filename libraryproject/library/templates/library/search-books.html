@@ -38,62 +38,73 @@
         </section>
 
         <div class="container">
+            <section class="message">
+                {% for message in messages %}
+                <p id="message">
+                <div class="alert alert-{{message.tags}}">{{message}}</div>
+                </p>
+                {% endfor %}
+            </section>
             <section class="search_input">
                 <h3>Seach a book: </h3>
                 <form method="GET" action=".">
                     <div class="form-row">
                         <div class="form-group col-12">
                             <div class="input-group">
-                                <input class="form-control py-2 border-right-0 border" type="search" name="title_contains" placeholder="Title contains..." />
+                                <input class="form-control py-2 border-right-0 border" type="search"
+                                    name="title_contains" placeholder="Title contains..." />
                                 <span class="input-group-append">
                                     <div class="input-group-text bg-transparent">
                                         <i class="fa fa-search"></i>
                                     </div>
                                 </span>
                             </div>
-                        </div>        
+                        </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-12">
                             <div class="input-group">
-                                <input class="form-control py-2 border-right-0 border" type="search" name="author_contains" placeholder="Author contains..." />
+                                <input class="form-control py-2 border-right-0 border" type="search"
+                                    name="author_contains" placeholder="Author contains..." />
                                 <span class="input-group-append">
                                     <div class="input-group-text bg-transparent">
                                         <i class="fa fa-search"></i>
                                     </div>
                                 </span>
                             </div>
-                        </div>        
+                        </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-12">
                             <div class="input-group">
-                                <input class="form-control py-2 border-right-0 border" type="search" name="isbn_exact" placeholder="ISBN exact..." />
+                                <input class="form-control py-2 border-right-0 border" type="search" name="isbn_exact"
+                                    placeholder="ISBN exact..." />
                                 <span class="input-group-append">
                                     <div class="input-group-text bg-transparent">
                                         <i class="fa fa-search"></i>
                                     </div>
                                 </span>
                             </div>
-                        </div>        
+                        </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-12">
                             <div class="input-group">
-                                <input class="form-control py-2 border-right-0 border" type="search" name="category_contains" placeholder="Category is..." />
+                                <input class="form-control py-2 border-right-0 border" type="search"
+                                    name="category_contains" placeholder="Category is..." />
                                 <span class="input-group-append">
                                     <div class="input-group-text bg-transparent">
                                         <i class="fa fa-search"></i>
                                     </div>
                                 </span>
                             </div>
-                        </div>        
+                        </div>
                     </div>
-                    
+
                     <button type="submit" class="btn btn-primary">Search</button>
-                  </form>            
+                </form>
             </section>
-            
+
             {%ifnotequal searchedbook ''%}
             <section class="search_output">
                 {% for bookitem in searchedbook %}
@@ -102,10 +113,12 @@
                         <h5 class="card-title">{{bookitem.title}}</h5>
                         <h6 class="card-subtitle mb-2 text-muted">ISBN: {{bookitem.isbn}}</h6>
                         <p class="card-text">Author: {{bookitem.authors}}</p>
-                        <a href="/bookitems/{{bookitem.id}}" class="card-link" target="_black">View</a>
+                        <a href="/bookitems/{{bookitem.id}}" class="btn btn-outline-dark" target="_black">View</a>
                         {% if request.user.groups.all.0.name == "member" %}
-                        <a href="#" class="card-link">Reserve</a>
-                        {% else %}
+                        {% if bookitem.available_quantity > 0 %}
+                        <a href="/reserve_book/{{bookitem.id}}" class="btn btn-outline-dark">Reserve</a>
+                        {% endif %}
+                        {% elif request.user.groups.all.0.name == "librarian" %}
                         <a href="/bookitems/editBookitemInfo/{{bookitem.id}}" class="card-link">Update</a>
                         <a href="/bookitems/deleteBookitem/{{bookitem.id}}" class="card-link">Delete</a>
                         {% endif%}

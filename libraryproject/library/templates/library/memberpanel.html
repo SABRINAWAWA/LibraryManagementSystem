@@ -262,9 +262,9 @@
 
                 <ul class="list-group list-group-flush">
                     {% for book in reservedBooks %}
-                    <div class="bookitem card hstack gap-3">
-                        <div class="vstack">
-                            <div class="image hstack" style="width:55%;">
+                    <div class="bookitem card hstack">
+                        <div class="vstack" style="width:50%;">
+                            <div class="image hstack">
                                 <img src="{{book.book.img_url}}" class="card-img bookimage"
                                     alt="{{book.book.title}}-image">
 
@@ -277,9 +277,10 @@
                             <div class="viewdetail">
                                 <a href="/bookitems/{{book.book.id}}" type="button" class="btn btn-outline-dark"
                                     target="_black">View Details</a>
+                                <a href="/unreserve_book/{{book.book.id}}" type="button" class="btn btn-outline-dark">Unreserve</a>
                             </div>
                         </div>
-                        <ul class="list-group list-group-flush" style="width:45%;">
+                        <ul class="list-group list-group-flush" style="width:50%;">
                             <li class="list-group-item">Reserved on {{book.reserved_date}}</li>
                             <li class="list-group-item">Available to rent after {{book.available_rent_date}}</li>
                             <li class="list-group-item">Should rent before <span>{{book.deadline}}</span></li>

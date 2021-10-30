@@ -46,6 +46,13 @@
         </section>
 
         <section class="info">
+            <section class="message">
+                {% for message in messages %}
+                <p id="message">
+                <div class="alert alert-{{message.tags}}">{{message}}</div>
+                </p>
+                {% endfor %}
+            </section>
             <h2>Basic Member Infomation</h2>
             <table class="table table-bordered border-dark table-info">
                 <thead>
@@ -96,8 +103,7 @@
                     </li>
                 </ul>
                 <div class="card-body" style="width:25%;">
-                    <a href="" type="button" class="btn btn-outline-danger"
-                    target="_black">Return</a>
+                    <a href="/check_in_book/{{selectedUser.id}}/{{book.book.id}}" type="button" class="btn btn-outline-danger">Return</a>
                 </div>
             </div>
             {% endfor %}
