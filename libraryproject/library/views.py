@@ -260,7 +260,7 @@ def memberpanel(request):
     numOfReservedBooks=len(reservedBooks)
     
     #Getting feedbacks and reviews
-    feedbacks=Feedbacks.objects.filter(member_id=member.id).filter(obs=True)
+    feedbacks=Feedbacks.objects.filter(member_id=member.id).filter(obs=True).order_by('-id')[:5]
     
     context={'user': user,
              'member':member,
@@ -271,6 +271,7 @@ def memberpanel(request):
              'numOfReturnedBooks':numOfReturnedBooks,
              'numOfReservedBooks':numOfReservedBooks,
              'feedbacks':feedbacks}
+    
     return render(request, 'library/memberpanel.html', context)
 
 """[summary]
@@ -281,8 +282,11 @@ Note: Librarian panel page needs modifications.
 @login_required(login_url='/login/')
 #@librarian_only
 def librarianpanel(request):
+    user=request.user
+    librarian=Librarian.objects.get(user=request.user.id)
     feedback=Feedbacks.objects.all();
-    context={'feedback':feedback}
+    context={'feedback':feedback,
+             'librarian':librarian}
     return render(request, 'library/librarianpanel.html', context)
 
 """[summary]
@@ -454,6 +458,23 @@ def deleteFeedback(request, feedback_id):
     feedback.save()
     messages.success(request, "'"+feedback.feedback_title+"'"+' was deleted.')
     return redirect('/memberpanel/')
+
+"""[summary]
+Function name: viewAllFeedback 
+Function description: rendering allfeedback page, displaying all feedbacks that the login member created or all feedbacks for librarians.
+"""
+@login_required(login_url='/login/')
+def viewAllFeedback(request):
+    user=User.objects.get(id=request.user.id)
+    if user.groups.all()[0].name=="member":
+        member=LibraryMember.objects.get(user=user)
+        feedbacks=Feedbacks.objects.get(member=member.id)
+    elif user.groups.all()[0].name=="librarian":
+        feedbacks=Feedbacks.objects.all().order_by('-id')[:5]
+    context={
+        'feedbacks':feedbacks,
+    }
+    return render(request, 'library/allfeedback.html', context)
 
 """[summary]
 Function name: registerLibrarian 

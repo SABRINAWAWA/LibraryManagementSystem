@@ -25,6 +25,7 @@ urlpatterns = [
     path('bookitems/deleteBookitem/<int:book_id>', views.deleteBook),
     
     # Feedback feature
+    path('feedback/all/', views.viewAllFeedback),
     path('feedback/new/', views.createFeedback),
     path('feedback/update/<int:feedback_id>', views.updateFeedback),
     path('feedback/delete/<int:feedback_id>', views.deleteFeedback),
