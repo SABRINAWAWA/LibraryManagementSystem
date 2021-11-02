@@ -21,60 +21,58 @@
 <style>
     .container {
         margin-top: 6rem;
+        margin-bottom: 3rem;
     }
 
     #back {
         margin-bottom: 1.5rem;
     }
 
-    .feedback-content {
-        width: 80%;
+    .image img {
+        height: 150px;
+        width: 100px;
     }
 
-    .feedback-button {
-        width: 20%;
-    }
-
-    .card h3 {
-        width: 80%;
+    .card-header {
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 600;
     }
 </style>
 
 <body>
-    <div class="container">
-        {% include 'library/includes/navbar.html' %}
-        {% if request.user.groups.all.0.name == "member" %}
-        <a id="back" href="/memberpanel/" class="btn btn-outline-primary">Back</a>
-        {% else %}
-        <a id="back" href="/librarianpanel/" class="btn btn-outline-primary">Back</a>
-        {% endif %}
+    {% include 'library/includes/navbar.html' %}
 
+
+    <div class="container">
+        <a id="back" href="/memberpanel/" class="btn btn-outline-primary">Back</a>
         <div class="card">
-            <div class="card-header hstack">
-                <h3>Feedback</h3>
-                <span id="createNewFeedback" class="mr-0 ml-auto"><a href="/feedback/new/" class="btn btn-primary"
-                        role="button">Create New Feedback</a></span>
+            <div class="card-header">
+                Returned Books
             </div>
             <div class="list-group">
-                {% for feedback in feedbacks %}
-                <div class="list-group-item">
-                    <div class="feedback-item hstack gap-3">
-                        <div class="feedback-content" >
-                            <h5 class="mb-1">{{feedback.feedback_title}}</h5>
-                            <p class="feedback-content-detail">{{feedback.feedback_content}}</p>
-                            <small>{{feedback.feedback_datetime}}</small>
+                {% for book in returnedBooks %}
+                <a href="/bookitems/{{book.book.id}}"
+                    class="list-group-item list-group-item-action flex-column align-items-start" target="_blank">
+                    <div class="hstack gap-3">
+                        <div class="image">
+                            <img src="{{book.book.img_url}}" alt="{{book.title}}-image">
                         </div>
-                        <div class="feedback-button vstack gap-3">
-                            <a href="/feedback/update/{{feedback.id}}" class="btn btn-warning btn-sm"
-                                role="button">Update</a>
-                            <a href="/feedback/delete/{{feedback.id}}" class="btn btn-danger btn-sm"
-                                role="button">Delete</a>
+                        <div class="vstack d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{book.book.title}}</h5>
+                            <small>Author: {{book.book.authors}}</small>
+                            <p class="mb-1">{{book.book.genres}}</p>
                         </div>
+                        <ul class="list-group list-group-flush" style="width:40%;">
+                            <li class="list-group-item">Rented on {{book.rented_date}}</li>
+                            <li class="list-group-item">Return on {{book.return_date}}</li>
+                        </ul>
                     </div>
-                </div>
+                </a>
                 {% endfor %}
             </div>
         </div>
+    </div>
 </body>
 
 </html>

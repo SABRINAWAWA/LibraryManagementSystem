@@ -103,37 +103,11 @@
             align-items: flex-start;
         }
 
-        .feedback {
-            margin-left: 1rem;
+        .feedbackReview{
             margin-top: 1rem;
-        }
-
-        .feedback .card .card-header {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-        }
-
-        .feedback .card .card-header h3 {
-            font-weight: bold;
-        }
-
-        .feedback-item {
-            display: flex;
-            flex-direction: row;
-        }
-
-        .feedback-item .feedback-content {
-            width: 27rem;
-        }
-
-        .feedback-item .feedback-button {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .feedback-item .feedback-button a {
-            margin-bottom: 1rem;
+            margin-left: 15px;
+            height:3rem;
+            width: 41rem;
         }
 
         .recommendation-container {
@@ -156,6 +130,21 @@
 
         .list-group-item span {
             color: red;
+        }
+
+        .recommendation-container .card-header{
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .extraButton{
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .extraButton a{
+            height: 55px;
+            font-size:1.5rem;
         }
     </style>
 </head>
@@ -197,29 +186,39 @@
                         <div class="card-body">
                             <h5 class="card-title">Book Rented</h5>
                             <p class="card-text">{{numOfRentedBooks}}</p>
-                            <p class="card-link"><a href="#">Details</a></p>
+                            <p class="card-link"><a href="#rentedBookShelf">Details</a></p>
                         </div>
                     </div>
                     <div class="card reservedbook" style="width: 13rem;">
                         <div class="card-body">
                             <h5 class="card-title">Book Reserved</h5>
                             <p class="card-text">{{numOfReservedBooks}}</p>
-                            <p class="card-link"><a href="#">Details</a></p>
+                            <p class="card-link"><a href="#reservedBookShelf">Details</a></p>
                         </div>
                     </div>
                     <div class="card returnedbook" style="width: 13rem;">
                         <div class="card-body">
                             <h5 class="card-title">Book Returned</h5>
                             <p class="card-text">{{numOfReturnedBooks}}</p>
-                            <p class="card-link"><a href="#">Details</a></p>
+                            <p class="card-link"><a href="/memberpanel/returnedBooks/">Details</a></p>
                         </div>
+                    </div>
+                </div>
+                <div class="feedbackReview vstack">
+                    <div class="d-grid gap-2 extraButton">
+                        <a class="btn btn-outline-primary" type="button" href="/feedback/all/">View all
+                            Feedbacks</a>
+                    </div>
+                    <div class="d-grid gap-2 extraButton">
+                        <a class="btn btn-outline-primary" type="button" href="/reviews/all/">View all
+                            Reviews</a>
                     </div>
                 </div>
             </div>
         </section>
 
         <section class="row2">
-            <div class="card rentedBookShelf" style="width: 38rem;">
+            <div class="card rentedBookShelf" style="width: 38rem;" id="rentedBookShelf">
                 <div class="card-header">
                     <h3> Rented Books </h3>
                 </div>
@@ -255,7 +254,7 @@
                 </ul>
             </div>
 
-            <div class="card reservedBookShelf" style="width: 38rem;">
+            <div class="card reservedBookShelf" style="width: 38rem;" id="reservedBookShelf">
                 <div class="card-header">
                     <h3> Reserved Books </h3>
                 </div>
@@ -277,7 +276,8 @@
                             <div class="viewdetail">
                                 <a href="/bookitems/{{book.book.id}}" type="button" class="btn btn-outline-dark"
                                     target="_black">View Details</a>
-                                <a href="/unreserve_book/{{book.book.id}}" type="button" class="btn btn-outline-dark">Unreserve</a>
+                                <a href="/unreserve_book/{{book.book.id}}" type="button"
+                                    class="btn btn-outline-dark">Unreserve</a>
                             </div>
                         </div>
                         <ul class="list-group list-group-flush" style="width:50%;">
@@ -332,54 +332,27 @@
                     </div>
                 </div>
             </div>-->
-            <div class="feedback" style="width: 35rem;">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Feedback</h3>
-                        <span id="createNewFeedback" class="mr-0 ml-auto"><a href="/feedback/new/"
-                                class="btn btn-primary" role="button">Create New Feedback</a></span>
-                    </div>
-                    <div class="list-group">
-                        {% for feedback in feedbacks %}
-                        <div class="list-group-item d-flex justify-content-between align-items-start">
-                            <div class="feedback-item">
-                                <div class="feedback-content">
-                                    <h5 class="mb-1">{{feedback.feedback_title}}</h5>
-                                    <p class="feedback-content-detail">{{feedback.feedback_content}}</p>
-                                    <small>{{feedback.feedback_datetime}}</small>
-                                </div>
-                                <div class="feedback-button">
-                                    <a href="/feedback/update/{{feedback.id}}" class="btn btn-warning btn-sm"
-                                        role="button">Update</a>
-                                    <a href="/feedback/delete/{{feedback.id}}" class="btn btn-danger btn-sm"
-                                        role="button">Delete</a>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <div class="card-footer">
-                        <div class="d-grid gap-2">
-                            <a class="btn btn-outline-primary" type="button" href="/feedback/all/">View all feedbacks</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="recommendation-container" style="width: 35rem;">
+            <div class="recommendation-container" style="width: 38rem;">
                 <div class="card">
                     <div class="card-header">
                         Recommendation List
                     </div>
                     <div class="list-group">
-                        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">Book Title</h5>
-                                <small>Book Author</small>
+                        {% for book in recomBooks %}
+                        <a href="/bookitems/{{book.id}}" class="list-group-item list-group-item-action flex-column align-items-start" target="_blank">
+                            <div class="hstack gap-3">
+                                <div class="image">
+                                    <img src="{{book.img_url}}" alt="{{book.title}}-image">
+                                </div>
+                                <div class="vstack d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{book.title}}</h5>
+                                    <small>Author: {{book.authors}}</small>
+                                    <p class="mb-1">{{book.genres}}</p>
+                                </div>
                             </div>
-                            <p class="mb-1">Description</p>
-                            <small>Genre</small>
                         </a>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

@@ -249,6 +249,17 @@ def memberpanel(request):
     user=request.user
     member=LibraryMember.objects.get(user=request.user.id)
     
+    #Getting returned books and coutting the number of books according to the genres
+    bookDict=getReturnedBook(member)
+
+    # If member returns at least one book, we can return a recommendation book list 
+    # else, we return the top 5 rating books. 
+    if len(bookDict)>0:
+        favoriteGenre=getFavoriteGenre(bookDict)
+        recomBooks=getRecomBooks(favoriteGenre)
+    else:
+        recomBooks=getTopFiveBooks()
+        
     #Getting books info 
     rentedBook=Rented_books.objects.filter(Q(member_id=member.id) & Q(obs=True))
     returnedBooks=Rented_books.objects.filter(Q(member_id=member.id) & Q(obs=False))
@@ -270,9 +281,78 @@ def memberpanel(request):
              'numOfRentedBooks':numOfRentedBooks,
              'numOfReturnedBooks':numOfReturnedBooks,
              'numOfReservedBooks':numOfReservedBooks,
+             'recomBooks':recomBooks,
              'feedbacks':feedbacks}
     
     return render(request, 'library/memberpanel.html', context)
+
+"""[summary]
+Function name: getReturnedBook 
+Function description: getting all returned books, counting the number of each genres, and returning the book count dictionary.
+"""
+def getReturnedBook(member):
+    # Getting the returned books of this member
+    returnBooks=Rented_books.objects.filter(Q(member=member)&Q(obs=False))
+    # Counting the genres and books 
+    countBooks={}
+    for book in returnBooks:
+        # Getting genres 
+        oneBookGenres=book.book.genres.split('|')
+        # Counting genres and storing in the dict
+        for bookGenres in oneBookGenres:
+            if bookGenres in countBooks:
+                countBooks[bookGenres] = countBooks[bookGenres]+1
+            else:
+                countBooks[bookGenres]=1
+    #print(countBooks)
+    return countBooks
+
+"""[summary]
+Function name: getFavoriteGenre 
+Function description: getting the book counting dictionary and then finding the max counting of the genre, returning that genre.
+"""
+def getFavoriteGenre(bookDict):
+    # get max count of books
+    favoriteGenre=""
+    maxCount=0
+    for genre in bookDict:
+        if bookDict[genre]>maxCount:
+            favoriteGenre=genre
+            maxCount=bookDict[genre]
+    #print(favoriteGenre)
+    return favoriteGenre
+
+"""[summary]
+Function name: getRecomBooks 
+Function description: getting the favorite genre and then processing the bookitem tables to get a list of books that contain that genre, 
+and ordering these books by average rating, returning the highest 5 books.
+"""
+def getRecomBooks(genre):
+    books=Bookitems.objects.filter(Q(genres__icontains=genre))
+    recomBooks=books.order_by('average_rating').reverse()[:5]
+    #print(recomBooks)
+    return recomBooks
+
+"""[summary]
+Function name: getTopFiveBooks 
+Function description: push recommdated books to new members(member who does not rent a book yet), push the top 5 rating books.
+"""
+def getTopFiveBooks():
+    # Get highest rating from bookitem table
+    topFiveBooks=Bookitems.objects.all().order_by('average_rating').reverse()[:5]
+    #print(topFiveBooks)
+    return topFiveBooks
+
+"""[summary]
+Function name: returnedBooks 
+Function description: rendering returnedBook page, getting returned books from rented_book table based on the member and user id.
+"""
+def returnedBooks(request):
+    user=User.objects.get(id=request.user.id)
+    member=LibraryMember.objects.get(user=user)
+    returnedBookList=Rented_books.objects.filter(Q(member=member)&Q(obs=False))
+    context={"returnedBooks":returnedBookList}
+    return render(request, 'library/returnedBook.html', context)
 
 """[summary]
 Function name: librarianpanel 
@@ -285,7 +365,8 @@ def librarianpanel(request):
     user=request.user
     librarian=Librarian.objects.get(user=request.user.id)
     feedback=Feedbacks.objects.all();
-    context={'feedback':feedback,
+    context={'user':user, 
+             'feedback':feedback,
              'librarian':librarian}
     return render(request, 'library/librarianpanel.html', context)
 
@@ -468,9 +549,7 @@ def viewAllFeedback(request):
     user=User.objects.get(id=request.user.id)
     if user.groups.all()[0].name=="member":
         member=LibraryMember.objects.get(user=user)
-        feedbacks=Feedbacks.objects.get(member=member.id)
-    elif user.groups.all()[0].name=="librarian":
-        feedbacks=Feedbacks.objects.all().order_by('-id')[:5]
+        feedbacks=Feedbacks.objects.filter(Q(member=member.id)&Q(obs=True))
     context={
         'feedbacks':feedbacks,
     }
@@ -825,4 +904,7 @@ def unreserveBook(request, book_id):
         reservedBookRecord.obs=False
         reservedBookRecord.save()
     return redirect('/memberpanel/')
+    
+
+
     

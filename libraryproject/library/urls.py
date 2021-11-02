@@ -16,6 +16,7 @@ urlpatterns = [
     
     # Panel links
     path('memberpanel/', views.memberpanel),
+    path('memberpanel/returnedBooks/', views.returnedBooks),
     path('librarianpanel/', views.librarianpanel),
     
     # Bookitems-related features
