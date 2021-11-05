@@ -23,6 +23,7 @@
             margin-bottom: 4rem;
         }
         td {
+            width:auto;
             padding: 0px 35px 0px 0px;
         }
         .div {
@@ -70,11 +71,17 @@
         <p>Genres: Not Available</p>
         {% endif %}
     </td>
-    
+         <td>
+            <h3>Still have some doubts?</h3>
+            <a href='/review/all/{{book.id}}'><button class="btn">Read The Reviews</button></a>
+            <h3>Already read it?</h3>
+            <h3>Please share your opinion!</h3>
+            <a href='/review/new/{{book.id}}'><button class="btn">Review This Book</button></a>
+         </td>   
 </tr>
     <tr>
     
-    <td><div class="div">
+    <td colspan="2"><div class="div">
         {% if book.description|length > 0 %}
         <p>Description: {{book.description}}</p>
         {% else %}
