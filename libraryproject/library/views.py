@@ -1,5 +1,5 @@
 import datetime
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -9,10 +9,11 @@ from django.views import View
 from django.http import HttpResponse
 from django.db.models import Q
 from django.contrib.auth.models import User
+from django.http import HttpResponseRedirect
 
-from .models import Bookitems, LibraryMember, Feedbacks, Librarian, Notification, Reserved_books, Rented_books
+from .models import Bookitems, LibraryMember, Feedbacks, Librarian, Notification, Reserved_books, Rented_books, Review
 from .filters import BookitemsFilter, UserFilter
-from .forms import CreateUserForm, UserUpdateForm, MemberUpdateForm, BookitemForm, FeedbackForm, LibarianUpdateForm, NotificationForm
+from .forms import CreateUserForm, UserUpdateForm, MemberUpdateForm, BookitemForm, FeedbackForm, LibarianUpdateForm, NotificationForm, ReviewForm
 from .decorators import unauthenticated_user, allowed_user, librarian_only
 
 """[summary]
@@ -904,6 +905,81 @@ def unreserveBook(request, book_id):
         reservedBookRecord.obs=False
         reservedBookRecord.save()
     return redirect('/memberpanel/')
+
+"""[summary]
+Function name: createReview 
+Function description:  rendering createReview form, saving new review to the Review table, showing confirmation message after saving.
+"""
+@login_required(login_url='/login/')
+def createReview(request, book_id):
+    book = get_object_or_404(Bookitems, pk=book_id)
+    form=ReviewForm(request.POST)
+    if form.is_valid():
+        author = form.cleaned_data['author']
+        content = form.cleaned_data['content']
+        review = Review()
+        review.book = book
+        review.author = author
+        review.content = content
+        review.created_date = datetime.datetime.now()
+        review.save()
+        messages.success(request, 'Your review was posted. Thank you very much, ' + review.author +'!')
+        return HttpResponseRedirect(request.path_info)
+    context={ 'book': book,
+                  'form':form,}
+    return render(request, 'library/createReview.html', context)
+
+
+
+"""[summary]
+Function name: updateReview 
+Function description:  rendering updateReview form, allowing librarian to edit existing review in the Review table, showing confirmation message after saving changes.
+"""
+@login_required(login_url='/login/')
+#@librarian_only
+def updateReview(request, review_id):
+    review=Review.objects.get(id=review_id)
+    if request.method=='POST':
+        form=ReviewForm(request.POST, instance=review)
+        if form.is_valid():
+            form.save()
+            messages.success(request,'Review has been edited!')
+            return HttpResponseRedirect(request.path_info)
+    else:
+        form=ReviewForm(instance=review)
+
+    context={
+        'form':form,
+        'review': review,
+    }
+    return render(request,"library/updatereview.html", context)
+
+"""[summary]
+Function name: deleteReview
+Function description: allowing librarian to delete any review from the Review table.
+"""
+@login_required(login_url='/login/')
+#@librarian_only
+def deleteReview(request, review_id):
+    review=Review.objects.get(id=review_id)
+    review.delete()
+    messages.success(request, "'"+review.author+"'"+' was deleted.')
+    return redirect(request.META.get('HTTP_REFERER'))
+
+"""[summary]
+Function name: viewAllReview 
+Function description: rendering allreview page, displaying all reviews created for a book.
+"""
+@login_required(login_url='/login/')
+def viewAllReview(request, book_id):
+    book=Bookitems.objects.get(id=book_id)
+    reviews=Review.objects.all().filter(book=book.id)
+    context={
+        'reviews':reviews,
+    }
+    return render(request, 'library/allreview.html', context)   
+
+
     
 
 
