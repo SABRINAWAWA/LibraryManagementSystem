@@ -2,7 +2,7 @@ from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.contrib.auth.models import User
-from .models import Feedbacks, LibraryMember, Bookitems, Librarian, Notification
+from .models import Feedbacks, LibraryMember, Bookitems, Librarian, Notification, Review
 from django.forms import Textarea
 
 class CreateUserForm(UserCreationForm):
@@ -79,3 +79,11 @@ class NotificationForm(forms.ModelForm):
     class Meta:
         model=Notification
         fields=['Title', 'content']
+
+class ReviewForm(forms.ModelForm):
+    author=forms.CharField(max_length=200)
+    content=forms.Textarea()
+
+    class Meta:
+        model=Review
+        fields=['author', 'content']        

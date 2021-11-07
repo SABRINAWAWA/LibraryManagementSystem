@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Reviews</title>
+    <link rel="shortcut icon" href="{% static 'library/images/icon.png' %}"/>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
+        integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"
+        integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js"
+        integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/"
+        crossorigin="anonymous"></script>
+    
+    <script>
+       window.addEventListener( "pageshow", function ( event ) {
+  var historyTraversal = event.persisted || 
+                         ( typeof window.performance != "undefined" && 
+                              window.performance.navigation.type === 2 );
+  if ( historyTraversal ) {
+    window.location.reload();
+  }
+});
+    </script>
+</head>
+<style>
+    .container{
+        margin-top: 6rem;
+    }
+
+    #back{
+        margin-bottom: 1rem;
+    }
+</style>
+<body>
+<div class="container">
+    {% include 'library/includes/navbar.html' %}
+
+    <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-primary" class>Back</a>
+
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="text-center">All Reviews</h3>
+        </div>
+        <div class="list-group">
+            {% for review in reviews %}
+            <div class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="feedback-item">
+                    <div class="feedback-content">
+                        <h5 class="mb-1">{{review.author}}</h5>
+                        <p class="feedback-content-detail">{{review.content}}</p>
+                        <small>{{review.created_date}}</small>
+                        {% if request.user.groups.all.0.name == "librarian" %}
+                        <a href="/review/update/{{review.id}}" class="card-link">Edit</a>
+                        <a href="/review/delete/{{review.id}}{{book.id}}" class="card-link">Delete</a>
+                        {% endif%}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+</div>
+</body>
+</html>

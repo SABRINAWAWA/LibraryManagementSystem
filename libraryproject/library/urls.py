@@ -59,6 +59,12 @@ urlpatterns = [
     path('holdaccount/hold/<int:user_id>', views.holdAccount),
     path('holdaccount/release/<int:user_id>', views.releaseAccount),
 
+    # Review feature
+    path('review/all/<int:book_id>', views.viewAllReview),
+    path('review/new/<int:book_id>', views.createReview),
+    path('review/update/<int:review_id>', views.updateReview),
+    path('review/delete/<int:review_id>', views.deleteReview),
+
 ]
 
 '''
