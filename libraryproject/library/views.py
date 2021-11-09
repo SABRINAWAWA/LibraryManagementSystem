@@ -292,7 +292,7 @@ Function description: getting all returned books, counting the number of each ge
 """
 def getReturnedBook(member):
     # Getting the returned books of this member
-    returnBooks=Rented_books.objects.filter(Q(member=member)&Q(obs=False))
+    returnBooks=Rented_books.objects.filter(Q(member=member))
     # Counting the genres and books 
     countBooks={}
     for book in returnBooks:
@@ -311,6 +311,7 @@ def getReturnedBook(member):
 Function name: getFavoriteGenre 
 Function description: getting the book counting dictionary and then finding the max counting of the genre, returning that genre.
 """
+
 def getFavoriteGenre(bookDict):
     # get max count of books
     favoriteGenre=""
