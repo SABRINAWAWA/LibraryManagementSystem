@@ -99,3 +99,12 @@ class Notification(models.Model):
     rentedBook=models.ForeignKey(Rented_books,blank=True,on_delete=models.CASCADE, null=True)
     date=models.DateTimeField(default=timezone.now, null=True)
     user_has_seen=models.BooleanField(default=False)
+
+class Review(models.Model):
+    book = models.ForeignKey('Bookitems', on_delete=models.PROTECT)
+    author = models.CharField(max_length=200)
+    content = models.TextField(max_length=1000)
+    created_date = models.DateTimeField(default=timezone.now, null=True)
+
+    def __str__(self):
+        return self.text
