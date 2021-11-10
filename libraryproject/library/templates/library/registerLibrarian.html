@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Librarian Register</title>
+    <link rel="shortcut icon" href="{% static 'library/images/librarian_icon.png' %}"/>
     <link rel="stylesheet" href="{% static 'library/styles/register.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
@@ -19,10 +20,24 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js"
         integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/"
         crossorigin="anonymous"></script>
+        <style>
+        .journey {
+        position:absolute;
+        top:10%;
+        left:5px;
+        }      
+        .footer_container {
+            height: 50px;
+        }
+      </style>
 </head>
 
 <body>
     {% include 'library/includes/navbar.html' %}
+    <div class="journey">
+        <img src="{% static 'library/images/superlibrarian.jpg' %}"/>
+        <br><h2><i>Librarian Wanted!</i></h2>
+    </div>
     <div class="container h-100">
         <div class="d-flex justify-content-center h-100">
             <div class="user_card">
@@ -95,6 +110,7 @@
             form_fields[field].className += ' form-control'
         }
     </script>
+    {% include 'library/includes/footer-mini.html' %}
 </body>
 
 </html>
