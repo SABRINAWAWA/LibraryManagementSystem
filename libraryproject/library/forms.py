@@ -67,7 +67,7 @@ class LibarianUpdateForm(forms.ModelForm):
     phone=forms.CharField(max_length=20)
     address=forms.CharField(max_length=100)
     birthdate=forms.DateField()
-    position=forms.MultipleChoiceField(choices = position_choices)
+    position=forms.CharField(widget=forms.Select(choices=position_choices))
     logo=forms.CharField(max_length=200)
     class Meta:
         model=Librarian
@@ -75,7 +75,7 @@ class LibarianUpdateForm(forms.ModelForm):
         
 class NotificationForm(forms.ModelForm):
     Title=forms.CharField(max_length=255)
-    content=forms.Textarea()
+    content=forms.CharField(max_length=1000, widget=forms.Textarea(attrs={'cols': 40, 'rows': 10}))
     class Meta:
         model=Notification
         fields=['Title', 'content']
