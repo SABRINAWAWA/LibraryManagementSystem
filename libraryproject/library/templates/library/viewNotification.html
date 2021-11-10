@@ -7,9 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="This is the home page of Library and it allows user to log-in. It contains information about details of some books and search catalog.">
-    <title>Library-Home</title>
-
+        content="This is the notification page that allows a user to read individual notifications.">
+    <title>Notification</title>
+    <link rel="shortcut icon" href="{% static 'library/images/icon.png' %}"/>
     <link rel="stylesheet" href="{% static 'library/styles/home.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
@@ -22,7 +22,49 @@
         crossorigin="anonymous"></script>
     <style>
         .container {
-            margin-top: 6rem;
+            margin-top: 8rem;
+            width: 500px;
+            background-color: white;
+            
+        }
+
+        .header {
+            text-align: center;
+            color: blue;
+        
+        } 
+
+        .notification {
+            margin: 1rem auto;
+            width: 75%;
+        }
+        
+        .btn {
+             background-color: #4c9ed9;
+             color: #ffffff;
+            
+             border: 1px solid #111;
+             }
+        .btn:hover {
+             background-color: #ffffff;
+             color: #4c9ed9;
+             border: 1px solid #111;
+        }
+        
+        .footer_container {
+            height: 50px;
+        }
+        .ul {
+            list-style-type: none;
+            font-weight: bold;
+        }
+
+        body { 
+         background: url('{% static "library/images/letters.jpg" %}') no-repeat center center fixed;
+        }
+        label {
+            color:blue;
+
         }
     </style>
 </head>
@@ -30,9 +72,37 @@
 <body>
     {% include 'library/includes/navbar.html' %}
     <div class="container">
-        <h3>{{notification.Title}}</h3>
-        <p>{{notification.content}}</p>
-    </div>
+        <div class="header">
+            <h2>Received Notification</h2>
+        </div>
+        <div class="notification">
+                <ul class="ul">
+                <li>
+                    <label>From:</label>
+                    {{notification.from_Librarian}}
+                </li>
+                <li>
+                    <label>Date:</label>
+                    {{notification.date}}
+                </li>
+                <li>
+                    <label>Title:</label>
+                    {{notification.Title}}
+                </li>
+                <li>
+                    <label>Content:</label>
+                <textarea rows="5" class="content" hidden></textarea>
+                <textarea rows="5" class="content" disabled style="width:300px; color:black;background-color:aliceblue;font-style: italic; max-height: 200px; overflow: auto">{{notification.content}}</textarea>
+                </li>
+                
+            </ul>
+        </div>
+
+                <div class="d-flex justify-content-center mt-3 login_container">
+                    <a href="/memberpanel/" type="button" class="btn btn-light">Back to Memberpanel</a>
+                </div><br>
+            
+    {% include 'library/includes/footer-mini.html' %}
 </body>
 
 </html>
