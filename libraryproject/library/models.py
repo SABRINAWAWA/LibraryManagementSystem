@@ -3,6 +3,7 @@ from django.db import models
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
 
+# Bookitems class defines the bookitems model/table
 class Bookitems(models.Model):
     title=models.CharField(_('title'), max_length=255, default='NoTitle')
     authors=models.CharField(_('authors'), max_length=200, default='NoAuthor')
@@ -22,6 +23,7 @@ class Bookitems(models.Model):
     def __str__(self):
         return f'{self.title}-{self.authors}'
 
+# LibraryMember class defines the library member model/table
 class LibraryMember(models.Model):
     user=models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     phone=models.CharField(max_length=200, null=True)
@@ -33,6 +35,7 @@ class LibraryMember(models.Model):
     def __str__(self):
         return self.user.username
 
+# Librarian class defines the librarian model/table
 class Librarian(models.Model):
     user=models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     phone=models.CharField(max_length=200, null=True) 
@@ -45,6 +48,7 @@ class Librarian(models.Model):
     def __str__(self):
         return self.user.username
     
+# Rented_books class defines the Rented_books model/table
 class Rented_books(models.Model):    
     book=models.ForeignKey(Bookitems, null=True, on_delete=models.PROTECT)
     title=models.CharField(_('title'), max_length=255, default='NoTitle')
@@ -56,6 +60,7 @@ class Rented_books(models.Model):
     def __str__(self):
         return self.title
     
+# hist_rented_books class defines the hist_rented_books model/table
 class hist_rented_books(models.Model):    
     book=models.ForeignKey(Bookitems, null=True, on_delete=models.PROTECT)
     title=models.CharField(_('title'), max_length=255, default='NoTitle')
@@ -66,6 +71,7 @@ class hist_rented_books(models.Model):
     def __str__(self):
         return self.title
     
+# reserved_books class defines the Reserved_books model/table
 class Reserved_books(models.Model): 
     book=models.ForeignKey(Bookitems, null=True, on_delete=models.PROTECT)
     title=models.CharField(_('title'), max_length=255, default='NoTitle')
@@ -79,6 +85,7 @@ class Reserved_books(models.Model):
     def __str__(self):
         return self.title
     
+# Feedbacks class defines the feedbacks model/table
 class Feedbacks(models.Model):    
     member=models.ForeignKey(LibraryMember, null=False, on_delete=models.CASCADE)
     feedback_title=models.CharField(_('Feedback Title'), max_length=255, default='NoFeedbackTitle')
@@ -87,7 +94,8 @@ class Feedbacks(models.Model):
     obs=models.BooleanField(_('OBS'), default=True)
     def __str__(self):
         return f'{self.member.user.username}'
-    
+ 
+# Notification class defines the notifications model/table   
 class Notification(models.Model):
     # 1=returned book, 2=reserved book, 3=rented book
     notification_type=models.IntegerField(_('Notification Type'))
@@ -99,7 +107,9 @@ class Notification(models.Model):
     rentedBook=models.ForeignKey(Rented_books,blank=True,on_delete=models.CASCADE, null=True)
     date=models.DateTimeField(default=timezone.now, null=True)
     user_has_seen=models.BooleanField(default=False)
-
+    
+    
+# Review class defines the review model/table
 class Review(models.Model):
     book = models.ForeignKey('Bookitems', on_delete=models.PROTECT)
     author = models.CharField(max_length=200)
