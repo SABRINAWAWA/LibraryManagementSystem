@@ -486,7 +486,21 @@ Function description: delete bookitems from the bookitems table.
 @librarian_only
 def deleteBook(request, book_id):
     bookitem=Bookitems.objects.get(id=book_id)
-    bookitem.delete()
+    bookitem.obs=False
+    bookitem.save()
+    
+    # Deal with books that are reserved by members
+    reservedBookRecord=Reserved_books.objects.filter(Q(book=bookitem)&Q(obs=True))
+    for reservedBook in reservedBookRecord:
+        reservedBook.obs=False
+        reservedBook.save()
+        
+    # Deal with books that are rented by members
+    rentedBookRecord=Rented_books.objects.filter(Q(book=bookitem)&Q(obs=True))
+    for rentedBook in rentedBookRecord:
+        rentedBook.obs=False
+        rentedBook.save()
+
     messages.success(request, bookitem.title+' was deleted.')
     return redirect('/memberpanel/')
 
