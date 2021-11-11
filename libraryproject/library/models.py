@@ -16,9 +16,9 @@ class Bookitems(models.Model):
     img_url=models.CharField(_("images"), max_length=1000, default='NoImage')
     stock_quantity=models.IntegerField(_("Stock Quantity"), default=0)
     available_quantity=models.IntegerField(_("Available Quantity"), default=0)
-
+    obs=models.BooleanField(_('OBS'), default=True)
     class Meta:
-        ordering = ( 'title', 'authors', 'average_rating', 'isbn', 'format', 'description', 'edition', 'genres', 'img_url', 'stock_quantity', 'available_quantity' )
+        ordering = ( 'title', 'authors', 'average_rating', 'isbn', 'format', 'description', 'edition', 'genres', 'img_url', 'stock_quantity', 'available_quantity','obs' )
 
     def __str__(self):
         return f'{self.title}-{self.authors}'
