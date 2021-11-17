@@ -210,7 +210,6 @@ Function name: registerpage
 Function description: rendering user register page. When users submit the register form, it will create new user in the user table and LibraryMember table.
 LibraryMembers will be directed to login page.
 """
-@unauthenticated_user
 def registerpage(request):
     form = CreateUserForm()
     if request.method == 'POST':
