@@ -2,13 +2,14 @@
 # Clone and Run:
 1. Install Git: https://git-scm.com/downloads
 2. Install Python: https://www.python.org/downloads/
-3. Install pip: https://www.liquidweb.com/kb/install-pip-windows/
-4. Install Django: https://docs.djangoproject.com/en/3.2/topics/install/
-5. Install django-filter: https://pypi.org/project/django-filter/
-6. Use "git clone https://github.com/SABRINAWAWA/CS195GroupProject.git" to clone this repo to the local computer.
-7. In the terminal, use this commend to run this project: "python3 manage.py runserver".
-8. After starting the development server, we will have a message "Starting development server at http://127.0.0.1:8000/".
-9. Use "http://127.0.0.1:8000/home/" to access the homepage of this website.
+3. Install pip: 
+   (windows) https://www.liquidweb.com/kb/install-pip-windows/
+5. Install Django: https://docs.djangoproject.com/en/3.2/topics/install/
+6. Install django-filter: https://pypi.org/project/django-filter/
+7. Use "git clone https://github.com/SABRINAWAWA/CS195GroupProject.git" to clone this repo to the local computer.
+8. In the terminal, use this commend to run this project: "python3 manage.py runserver".
+9. After starting the development server, we will have a message "Starting development server at http://127.0.0.1:8000/".
+10. Use "http://127.0.0.1:8000/home/" to access the homepage of this website.
 
 # For Members: 
 ## Library Homepage: /home/
@@ -54,8 +55,8 @@ This page contains information about the developer of this website.
 ![checkout](https://user-images.githubusercontent.com/53490593/142139567-714fb1d1-a4d7-4e30-9dab-58405963eecd.png)
 3. Librarians can add/update book information.
 ![image](https://user-images.githubusercontent.com/53490593/142139669-d7b99435-bbe0-41f4-ab6a-53faff413380.png)
-4. Librarians can hold/release member accounts.
 ![image](https://user-images.githubusercontent.com/53490593/142139751-831004f0-4cfd-43e5-b173-a848f5b64397.png)
+4. Librarians can hold/release member accounts.
 5. Librarians can send notifications to members.
 ![image](https://user-images.githubusercontent.com/53490593/142139639-4900709c-77ca-4af9-86f8-1b3cb8aae7e7.png)
 ![image](https://user-images.githubusercontent.com/53490593/142139605-e2f71563-e4ab-4c18-bb81-4b9314d7b322.png)
