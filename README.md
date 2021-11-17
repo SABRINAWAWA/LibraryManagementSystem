@@ -2,14 +2,13 @@
 # Clone and Run:
 1. Install Git: https://git-scm.com/downloads
 2. Install Python: https://www.python.org/downloads/
-3. Install pip: 
-   (windows) https://www.liquidweb.com/kb/install-pip-windows/
-5. Install Django: https://docs.djangoproject.com/en/3.2/topics/install/
-6. Install django-filter: https://pypi.org/project/django-filter/
-7. Use "git clone https://github.com/SABRINAWAWA/CS195GroupProject.git" to clone this repo to the local computer.
-8. In the terminal, use this commend to run this project: "python3 manage.py runserver".
-9. After starting the development server, we will have a message "Starting development server at http://127.0.0.1:8000/".
-10. Use "http://127.0.0.1:8000/home/" to access the homepage of this website.
+3. Install pip: https://pip.pypa.io/en/stable/installation/
+4. Install Django: https://docs.djangoproject.com/en/3.2/topics/install/
+5. Install django-filter: https://pypi.org/project/django-filter/
+6. Use "git clone https://github.com/SABRINAWAWA/CS195GroupProject.git" to clone this repo to the local computer.
+7. In the terminal, use this commend to run this project: "python3 manage.py runserver".
+8. After starting the development server, we will have a message "Starting development server at http://127.0.0.1:8000/".
+9. Use "http://127.0.0.1:8000/home/" to access the homepage of this website.
 
 # For Members: 
 ## Library Homepage: /home/
