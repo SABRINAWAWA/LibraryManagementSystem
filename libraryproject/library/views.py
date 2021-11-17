@@ -244,7 +244,7 @@ Function description: rendering LibraryMemberpanel page. Only LibraryMembers can
 Note: LibraryMember panel page needs modifications. 
 """
 @login_required(login_url='/login/')
-@allowed_user(allowed_roles=['LibraryMember'])
+@allowed_user(allowed_roles=['Member'])
 def memberpanel(request):
     #Getting user info
     user=request.user
