@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create New Feedback</title>
+    <link rel="shortcut icon" href="{% static 'library/images/icon.png' %}"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
     <script type="text/javascript" src="{% static 'library/javascript/library.js' %}"></script>
@@ -19,11 +20,11 @@
 
     <style>
         .container {
-            margin-top: 6rem;
+            margin-top: 4rem;
         }
 
         .card-body {
-            margin-top: 3rem;
+            margin-top: 1rem;
             background: LightGray;
             width: 27.5rem;
             display: flex;
@@ -46,8 +47,15 @@
         .input-group-text {
             background: CadetBlue;
             opacity: 0.8;
+        
         }
-
+        .div {
+        max-height: 150px; 
+            overflow: auto; 
+        }
+        .footer_container {
+            height: 50px;
+        }
 
     </style>
 
@@ -78,7 +86,9 @@
                 <div class="input-group-append">
                     <span class="input-group-text">Text</span>
                 </div>
+                <div class ="div">
                 {{form.feedback_content}}
+            </div>
             </div>
         </section>
 

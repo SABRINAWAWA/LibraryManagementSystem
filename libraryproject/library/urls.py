@@ -24,7 +24,7 @@ urlpatterns = [
     
     # Bookitems-related features
     path('bookitems/<int:book_id>', views.bookdetails),
-    path('bookitems/addbook/', views.addBook),
+    path('bookitems/addbook/', views.addBook, name="addBook"),
     path('bookitems/editBookitemInfo/<int:book_id>', views.editBookDetails),
     path('bookitems/deleteBookitem/<int:book_id>', views.deleteBook),
     
