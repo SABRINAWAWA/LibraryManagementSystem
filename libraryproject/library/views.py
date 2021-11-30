@@ -565,8 +565,8 @@ def viewAllFeedback(request):
     if user.groups.all()[0].name=="member":
         member=LibraryMember.objects.get(user=user)
         feedbacks=Feedbacks.objects.filter(Q(member=member.id)&Q(obs=True))
-    else:
-        feedbacks=Feedbacks.objects.all()
+    elif user.groups.all()[0].name=="librarian":
+        feedbacks=Feedbacks.objects.all().order_by('-id')  
     context={
         'feedbacks':feedbacks,
     }
@@ -591,6 +591,8 @@ def registerLibrarian(request):
             Librarian.objects.create(
                 user=user,
             )
+            user.is_staff=True
+            user.save()
             messages.success(request, 'Librarian Account was created for ' + username)
             return redirect('/login/')
     else:
@@ -987,7 +989,6 @@ Function name: viewAllReview
 Function description: rendering allreview page, displaying all reviews created for a book.
 """
 @login_required(login_url='/login/')
-@librarian_only
 def viewAllReview(request, book_id):
     book=Bookitems.objects.get(id=book_id)
     reviews=Review.objects.all().filter(book=book.id)
