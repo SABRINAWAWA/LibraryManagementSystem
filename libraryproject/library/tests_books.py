@@ -12,7 +12,7 @@ class TestViews(TestCase):
         self.addBook_url = reverse('addBook')
         self.user = User.objects.create_user(username='abc', password='abc')
     def test_add_book(self):
-        self.client.login(username='library', password='library001')
+        self.client.login(username='abc', password='abc')
         response = self.client.post(self.addBook_url, data={
             'title': 'abracadabra',
             'authors': 'abracadbrier, writer',
@@ -27,6 +27,6 @@ class TestViews(TestCase):
             'available_quantity': 5})
         
         
-        book = Bookitems.objects.all().values()
+        book = Bookitems.objects.all()
         print(book)
         self.assertEqual(response.status_code, 302) 

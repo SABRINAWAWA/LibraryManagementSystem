@@ -102,7 +102,7 @@ class Notification(models.Model):
     to_member=models.ForeignKey(LibraryMember, related_name='notification_to', on_delete=models.CASCADE, null=True)
     from_Librarian=models.ForeignKey(Librarian, related_name='notification_from', on_delete=models.CASCADE, null=True)
     Title=models.CharField(max_length=255)
-    content=models.TextField(max_length=255)
+    content=models.TextField(max_length=1000)
     reservedBook=models.ForeignKey(Reserved_books,blank=True, on_delete=models.CASCADE,null=True)
     rentedBook=models.ForeignKey(Rented_books,blank=True,on_delete=models.CASCADE, null=True)
     date=models.DateTimeField(default=timezone.now, null=True)

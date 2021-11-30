@@ -210,7 +210,6 @@ Function name: registerpage
 Function description: rendering user register page. When users submit the register form, it will create new user in the user table and LibraryMember table.
 LibraryMembers will be directed to login page.
 """
-@unauthenticated_user
 def registerpage(request):
     form = CreateUserForm()
     if request.method == 'POST':
@@ -244,7 +243,6 @@ Function description: rendering LibraryMemberpanel page. Only LibraryMembers can
 Note: LibraryMember panel page needs modifications. 
 """
 @login_required(login_url='/login/')
-@allowed_user(allowed_roles=['LibraryMember'])
 def memberpanel(request):
     #Getting user info
     user=request.user
@@ -563,9 +561,12 @@ Function description: rendering allfeedback page, displaying all feedbacks that 
 @login_required(login_url='/login/')
 def viewAllFeedback(request):
     user=User.objects.get(id=request.user.id)
+    
     if user.groups.all()[0].name=="member":
         member=LibraryMember.objects.get(user=user)
         feedbacks=Feedbacks.objects.filter(Q(member=member.id)&Q(obs=True))
+    else:
+        feedbacks=Feedbacks.objects.all()
     context={
         'feedbacks':feedbacks,
     }
