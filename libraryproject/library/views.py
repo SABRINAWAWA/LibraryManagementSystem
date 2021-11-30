@@ -863,10 +863,20 @@ def reserveBook(request, book_id):
     member=LibraryMember.objects.get(user=user)
     selectedBook=Bookitems.objects.get(id=book_id)
     reservedBookRecordList=Reserved_books.objects.filter(Q(member=member) & Q(obs=True))
+    rentedBookRecordList=Rented_books.objects.filter(Q(member=member) & Q(obs=True))
     #print(reservedBookRecordList)
+    selectedBook_count = 0
     if (len(reservedBookRecordList)<10):
+        for i in reservedBookRecordList:
+            if i.title == selectedBook.title:
+                selectedBook_count +=1
+
+        for i in rentedBookRecordList:
+            if i.title == selectedBook.title:
+                selectedBook_count +=1
+                    
         # if there are books available to be rented then allow users to reserve the book
-        if (selectedBook.available_quantity>0):
+        if (selectedBook.available_quantity>0 and selectedBook_count < 1):
             # Define current date
             nowdate=datetime.datetime.now().date()
             # Define the deadline to rent this book
@@ -897,6 +907,11 @@ def reserveBook(request, book_id):
             reservedBookRecord.save()
             reserveSussess=reservedBookRecord.book.title+" is reserved successfully."
             messages.info(request, reserveSussess)
+
+        elif (selectedBook_count == 1):
+            errorSent="Dear member, you already have reserved or rented a book of this title. Please reserve another book."
+            messages.info(request, errorSent)
+            
     else:
         errorSent="Dear member, you already reserved 10 books. Please rent some books you reserved before reserving more books!"
         messages.info(request, errorSent)
