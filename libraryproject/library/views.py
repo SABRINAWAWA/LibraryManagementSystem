@@ -518,7 +518,7 @@ def createFeedback(request):
             feedback.save()
             return redirect('/memberpanel/')    
     context={'form':form}
-    return render(request, 'library/createFeedback.html', context)
+    return render(request, 'library/createfeedback.html', context)
 
 """[summary]
 Function name: updateFeedback 
@@ -945,7 +945,7 @@ def createReview(request, book_id):
         return HttpResponseRedirect(request.path_info)
     context={ 'book': book,
                   'form':form,}
-    return render(request, 'library/createReview.html', context)
+    return render(request, 'library/createreview.html', context)
 
 
 
