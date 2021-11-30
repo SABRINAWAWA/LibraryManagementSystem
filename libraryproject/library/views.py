@@ -421,7 +421,7 @@ def editmemberinfo(request):
             'user_form':user_form,
             'member_form':member_form
         }
-    return render(request, 'library/editmemberinfo.html', context)
+    return render(request, 'library/editMemberInfo.html', context)
 
 """[summary]
 Function name: bookdetails 
