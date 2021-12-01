@@ -90,7 +90,10 @@
 </tr>
      <tr>
         <td>
-        {% if book.available_quantity >= 0 %}
+            {% if book.available_quantity > 0 %}
+            <h3>Available for renting</h3>
+            <a href='/reserve_book/{{book.id}}'><button class="btn">Add to Shelf</button></a>
+                {% else %}    
         <h3>Available for renting</h3>
             <button class="btn">Add to Shelf</button>
             {% else %}    
