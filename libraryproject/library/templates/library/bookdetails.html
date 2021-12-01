@@ -93,10 +93,7 @@
             {% if book.available_quantity > 0 %}
             <h3>Available for renting</h3>
             <a href='/reserve_book/{{book.id}}'><button class="btn">Add to Shelf</button></a>
-                {% else %}    
-        <h3>Available for renting</h3>
-            <button class="btn">Add to Shelf</button>
-            {% else %}    
+                {% else %}      
         <h3>Unavailable for renting</h3>
         <h3>We will contact you when it becomes available</h3>
         {% endif %}
