@@ -11,7 +11,7 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 
-from .models import Bookitems, LibraryMember, Feedbacks, Librarian, Notification, Reserved_books, Rented_books, Review
+from .models import Bookitems, LibraryMember, Feedbacks, Librarian, Notification, Reserved_books, Rented_books, Review, hist_rented_books
 from .filters import BookitemsFilter, UserFilter
 from .forms import CreateUserForm, UserUpdateForm, MemberUpdateForm, BookitemForm, FeedbackForm, LibarianUpdateForm, NotificationForm, ReviewForm
 from .decorators import unauthenticated_user, allowed_user, librarian_only
@@ -260,8 +260,8 @@ def memberpanel(request):
         recomBooks=getTopFiveBooks()
         
     #Getting books info 
-    rentedBook=Rented_books.objects.filter(Q(member_id=member.id) & Q(obs=True))
-    returnedBooks=Rented_books.objects.filter(Q(member_id=member.id) & Q(obs=False))
+    rentedBook=Rented_books.objects.filter(Q(member_id=member.id))
+    returnedBooks=hist_rented_books.objects.filter(Q(member_id=member.id))
     reservedBooks=Reserved_books.objects.filter(Q(member_id=member.id) & Q(obs=True))
     
     #Getting number of books
@@ -291,18 +291,19 @@ Function description: getting all returned books, counting the number of each ge
 """
 def getReturnedBook(member):
     # Getting the returned books of this member
-    returnBooks=Rented_books.objects.filter(Q(member=member))
+    returnBooks=hist_rented_books.objects.filter(Q(member=member))
     # Counting the genres and books 
     countBooks={}
     for book in returnBooks:
-        # Getting genres 
-        oneBookGenres=book.book.genres.split('|')
-        # Counting genres and storing in the dict
-        for bookGenres in oneBookGenres:
-            if bookGenres in countBooks:
-                countBooks[bookGenres] = countBooks[bookGenres]+1
-            else:
-                countBooks[bookGenres]=1
+        if book.book_id != None:
+             # Getting genres 
+             oneBookGenres=book.book.genres.split('|')
+             # Counting genres and storing in the dict
+             for bookGenres in oneBookGenres:
+                 if bookGenres in countBooks:
+                     countBooks[bookGenres] = countBooks[bookGenres]+1
+                 else:
+                     countBooks[bookGenres]=1
     #print(countBooks)
     return countBooks
 
@@ -350,9 +351,10 @@ Function description: rendering returnedBook page, getting returned books from r
 def returnedBooks(request):
     user=User.objects.get(id=request.user.id)
     member=LibraryMember.objects.get(user=user)
-    returnedBookList=Rented_books.objects.filter(Q(member=member)&Q(obs=False))
+    returnedBookList=hist_rented_books.objects.filter(Q(member=member))
     context={"returnedBooks":returnedBookList}
     return render(request, 'library/returnedBook.html', context)
+
 
 """[summary]
 Function name: librarianpanel 
@@ -483,24 +485,19 @@ Function description: delete bookitems from the bookitems table.
 @login_required(login_url='/login/')
 @librarian_only
 def deleteBook(request, book_id):
+    rentedBooks=Rented_books.objects.all()
     bookitem=Bookitems.objects.get(id=book_id)
-    bookitem.obs=False
-    bookitem.save()
-    
-    # Deal with books that are reserved by members
-    reservedBookRecord=Reserved_books.objects.filter(Q(book=bookitem)&Q(obs=True))
-    for reservedBook in reservedBookRecord:
-        reservedBook.obs=False
-        reservedBook.save()
-        
-    # Deal with books that are rented by members
-    rentedBookRecord=Rented_books.objects.filter(Q(book=bookitem)&Q(obs=True))
-    for rentedBook in rentedBookRecord:
-        rentedBook.obs=False
-        rentedBook.save()
-
-    messages.success(request, bookitem.title+' was deleted.')
-    return redirect('/memberpanel/')
+    bookitem_count = 0
+    for i in rentedBooks:
+            if i.title == bookitem.title:
+                bookitem_count +=1
+    if (bookitem_count == 0):
+        bookitem.delete()
+        messages.success(request, bookitem.title+' book was deleted.')
+    else:
+        errorSent="Dear librarian, at least one volume of the book that you are trying to delete is currently rented!"
+        messages.info(request, errorSent)
+    return redirect('/librarianpanel/')
 
 """[summary]
 Function name: createFeedback 
@@ -700,7 +697,7 @@ the selected user and member, and rented books.
 def checkinPage(request, user_id):
     selectedUser=User.objects.get(id=user_id)
     selectedMember=LibraryMember.objects.get(user=user_id)
-    rentedBooks=Rented_books.objects.filter(Q(member=selectedMember.id) & Q(obs=True))
+    rentedBooks=Rented_books.objects.filter(Q(member=selectedMember.id))
     nowdate=datetime.datetime.now().date()
     for book in rentedBooks:
         if nowdate>book.return_date:
@@ -796,7 +793,7 @@ def releaseAccount(request, user_id):
 
 """[Summary]
 Function name: checkin
-Function description: checkin function find the corresponging rented book in the rented_book table to unobservable, add 1 back to the available quantity of the book in the bookitems table.
+Function description: find the corresponging rented book record in the rented_book table, delete this record and create the corresponding record in the hist_rented_book table, add 1 back to the available quantity of the book in the bookitems table,
 check if the user returns the book late.
 """   
 @login_required(login_url='/login/')
@@ -806,23 +803,31 @@ def checkin(request, user_id, book_id):
     user=User.objects.get(id=user_id)
     book=Bookitems.objects.get(id=book_id)
     member=LibraryMember.objects.get(user=user)
-    # Define current date
+    # Define current date (date of return).
     nowdate=datetime.datetime.now().date()
     # Find the rented book record and change it to unobservable
-    rentdBookRecords=Rented_books.objects.filter(Q(member=member) & Q(book=book) & Q(obs=True))
+    rentdBookRecords=Rented_books.objects.filter(Q(member=member) & Q(book=book))
     rentdBookRecord=rentdBookRecords[0];
     rentdBookRecord.obs=False
+    
     # When returning book, add 1 to the available_quantity of that book
     book.available_quantity+=1
     book.save()
+    
     # Determine if the return is late or not.
     if (nowdate>rentdBookRecord.return_date):
         rentdBookRecord.lateReturn=True
     else:
         rentdBookRecord.lateReturn=False
     rentdBookRecord.save()
-    return redirect('/check_in/'+str(user_id))
+    # When returning the book, create a record in the hist_rented_book table.
+    histRentedBookRecord=hist_rented_books.objects.create(book=book, title=book.title, member=member, rented_date=rentdBookRecord.rented_date, return_date=nowdate, lateReturn=rentdBookRecord.lateReturn)
+    histRentedBookRecord.save()
 
+    # after creating the record ing the hist_rented_book table, delete the corresponding record from the rented_book table.
+    Rented_books.objects.filter(Q(member=member) & Q(book=book)).delete()
+
+    return redirect('/check_in/'+str(user_id))
 """[Summary]
 Function name: checkout
 Function description: checkout function calculate the rent date and return date for member, and create new rented_book object and save it in the rented_book table. 
@@ -863,7 +868,7 @@ def reserveBook(request, book_id):
     member=LibraryMember.objects.get(user=user)
     selectedBook=Bookitems.objects.get(id=book_id)
     reservedBookRecordList=Reserved_books.objects.filter(Q(member=member) & Q(obs=True))
-    rentedBookRecordList=Rented_books.objects.filter(Q(member=member) & Q(obs=True))
+    rentedBookRecordList=Rented_books.objects.filter(Q(member=member))
     #print(reservedBookRecordList)
     selectedBook_count = 0
     if (len(reservedBookRecordList)<10):
@@ -893,7 +898,7 @@ def reserveBook(request, book_id):
             # Define current date
             nowdate=datetime.datetime.now().date()
             # Search for rented book records
-            rentedBookRecords=Rented_books.objects.filter(Q(book=selectedBook) & Q(obs=True))
+            rentedBookRecords=Rented_books.objects.filter(Q(book=selectedBook))
             # Find the book that has the closest return_date
             rentedBookRecord=rentedBookRecords[0]
             for i in range(len(rentedBookRecords)):

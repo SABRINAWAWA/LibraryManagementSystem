@@ -16,9 +16,8 @@ class Bookitems(models.Model):
     img_url=models.CharField(_("images"), max_length=1000, default='NoImage')
     stock_quantity=models.IntegerField(_("Stock Quantity"), default=0)
     available_quantity=models.IntegerField(_("Available Quantity"), default=0)
-    obs=models.BooleanField(_('OBS'), default=True)
     class Meta:
-        ordering = ( 'title', 'authors', 'average_rating', 'isbn', 'format', 'description', 'edition', 'genres', 'img_url', 'stock_quantity', 'available_quantity','obs' )
+        ordering = ( 'title', 'authors', 'average_rating', 'isbn', 'format', 'description', 'edition', 'genres', 'img_url', 'stock_quantity', 'available_quantity' )
 
     def __str__(self):
         return f'{self.title}-{self.authors}'
@@ -55,25 +54,24 @@ class Rented_books(models.Model):
     member=models.ForeignKey(LibraryMember, null=False, on_delete=models.PROTECT)
     rented_date=models.DateField(_('Rented Date'), default="YYYY-MM-DD", null=True)
     return_date=models.DateField(_('Returned Date'), default="YYYY-MM-DD", null=True)
-    obs=models.BooleanField(_('OBS'), default=True)
     lateReturn=models.BooleanField(_('Late Return'), default=False)
     def __str__(self):
         return self.title
     
 # hist_rented_books class defines the hist_rented_books model/table
 class hist_rented_books(models.Model):    
-    book=models.ForeignKey(Bookitems, null=True, on_delete=models.PROTECT)
+    book=models.ForeignKey(Bookitems, null=True, on_delete=models.SET_NULL)
     title=models.CharField(_('title'), max_length=255, default='NoTitle')
-    member=models.ForeignKey(LibraryMember, null=False, on_delete=models.PROTECT)
+    member=models.ForeignKey(LibraryMember, null=True, on_delete=models.SET_NULL)
     rented_date=models.DateField(_('Rented Date'), default="YYYY-MM-DD", null=True)
     return_date=models.DateField(_('Returned Date'), default="YYYY-MM-DD", null=True)
-    obs=models.BooleanField(_('OBS'), default=True)
+    lateReturn=models.BooleanField(_('Late Return'), default=False)
     def __str__(self):
         return self.title
     
 # reserved_books class defines the Reserved_books model/table
 class Reserved_books(models.Model): 
-    book=models.ForeignKey(Bookitems, null=True, on_delete=models.PROTECT)
+    book=models.ForeignKey(Bookitems, null=True, on_delete=models.CASCADE)
     title=models.CharField(_('title'), max_length=255, default='NoTitle')
     member=models.ForeignKey(LibraryMember, null=False, on_delete=models.PROTECT)
     reserved_date=models.DateField(_('Reserved Date'), default="YYYY-MM-DD", null=True)
