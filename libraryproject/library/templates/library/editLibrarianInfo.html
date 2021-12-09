@@ -53,7 +53,8 @@
         .btn {
              background-color: #4c9ed9;
              color: #ffffff;
-             padding: 10px 20px;
+             text-align: center;
+             padding: 0;
              border: 1px solid #111;
              }
         .btn:hover {
@@ -68,6 +69,17 @@
         .footer_container {
             height: 50px;
         }
+
+        /*iphone */
+    @media all and (max-width:700px) { 
+        .btn {font-size:14px;
+            height:100px;
+        width:150px;}
+        .input-group-text {font-size:10px;}
+        footer {
+    display: none !important;
+  }    
+    }
     </style>
 </head>
 

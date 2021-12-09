@@ -23,6 +23,23 @@
         integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/"
         crossorigin="anonymous"></script>
 
+        <style>
+            .footer_container {
+                        height: 50px;
+                    } 
+            #id_id,#id_email,#id_username {
+                width:100%;
+            }
+            @media all and (max-width:700px) { 
+               
+                footer {
+                    display: none !important;
+                  }    
+            }
+            
+            
+            </style>   
+
 </head>
 
 <body>
@@ -67,7 +84,7 @@
         </div>
     </div>
      
-    {% include 'library/includes/footer.html' %}
+    {% include 'library/includes/footer-mini.html' %}
 </body>
 
 </html> 
