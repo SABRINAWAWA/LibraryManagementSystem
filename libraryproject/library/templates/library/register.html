@@ -51,14 +51,21 @@
     }
     @media all and (max-width:500px) { 
    
-    .journey {
-        position:absolute;
-        top:20%;
-        left:5px;}
+        .journey {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -75%);
+        max-height: 45%; 
+             overflow: -moz-hidden-unscrollable; 
+    }
         .container {
-        position:absolute;
-        top:20%;
-        left:75%;
+            position: absolute;
+            left: 50%;
+            top: 100%;
+            transform: translate(-50%, -25%);
+            max-height: 45%; 
+            overflow: -moz-hidden-unscrollable;
         }
         footer {
         display: none !important;
