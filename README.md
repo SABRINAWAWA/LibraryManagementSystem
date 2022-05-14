@@ -10,7 +10,7 @@
 8. After starting the development server, we will have a message "Starting development server at http://127.0.0.1:8000/".
 9. Use "http://127.0.0.1:8000/home/" to access the homepage of this website.
 
-# Play with our library management system (member portal and librarian portal):
+# Play with our [library management system](https://library-management-system-ccsf.herokuapp.com/home/) (member portal and librarian portal):
 ## As a member:
 Username: book2 
 
