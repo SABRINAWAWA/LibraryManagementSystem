@@ -12,10 +12,12 @@
 
 # Play with our library management system (member portal and librarian portal):
 ## As a member:
-Username: book2
+Username: book2 
+
 Password: book2123456
 ## As a librarian:
 Username: library
+
 Password: library001
 
 # For Members: 
