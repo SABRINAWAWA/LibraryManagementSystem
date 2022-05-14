@@ -10,6 +10,14 @@
 8. After starting the development server, we will have a message "Starting development server at http://127.0.0.1:8000/".
 9. Use "http://127.0.0.1:8000/home/" to access the homepage of this website.
 
+# Play with our library management system (member portal and librarian portal):
+## As a member:
+Username: book2
+Password: book2123456
+## As a librarian:
+Username: library
+Password: library001
+
 # For Members: 
 ## Library Homepage: /home/
 Home page contains links to login, search, and contact page.
